@@ -1,0 +1,30 @@
+.slideshow {
+    /* margin-top: 76px; */
+    margin-top: 60px;
+    height: 85vh;
+    height: calc(100vh - 60px);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+/* .slideshowitem {
+    transition: 0.5s;
+    position: absolute;
+    top: 0;
+    left: left;
+    z-index: 0;
+    height: 100%;
+
+} */
+
+/*********************950px**********************/
+@media screen and (max-width: 950px) {
+    /* .slideshow {
+        margin-top: 0;
+        height: 100vh;
+
+    } */
+}

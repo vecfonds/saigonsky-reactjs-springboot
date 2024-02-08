@@ -1,0 +1,263 @@
+#payment {
+    margin: 0rem 7rem;
+    min-height: 100vh;
+
+}
+
+.payment-main {
+    /* margin-top: 2rem; */
+    display: flex;
+
+}
+
+.payment-main-line {
+    border-right: 3px solid var(--main-3);
+
+}
+
+.payment-main-left,
+.payment-main-right {
+    margin: 7rem 0;
+}
+
+.payment-main-right {
+    flex: 1;
+}
+
+.payment-main-left .headeri {
+    margin-bottom: 1em;
+}
+
+.payment-main-left {
+    flex: 1;
+    display: flex;
+    /* justify-content: center; */
+    flex-direction: column;
+    align-items: center;
+    /* border-right: 3px solid var(--main-3); */
+}
+
+.payment-main-left>.form {
+    width: 80%;
+}
+
+.form-groupS {
+    margin-bottom: 15px;
+
+}
+
+.form .form-inner .form-group {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    /* margin-bottom: 15px; */
+}
+
+.form .form-inner .form-group input {
+    padding: 15px;
+    border: 1px solid transparent;
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--main-3);
+    transition: border 0.25s linear;
+    background-color: transparent;
+    outline: none;
+    color: black;
+    font-size: 14px;
+}
+
+.form .form-inner .form-group input:focus+label,
+.form .form-inner .form-group input:not(:placeholder-shown)+label {
+    top: 10px;
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 10px;
+    background-color: var(--main-1);
+    /* background: linear-gradient(to bottom, transparent, transparent, transparent, transparent, #EEE3DA, transparent, transparent, transparent, transparent); */
+
+    padding: 1px 5px;
+    font-size: 12px;
+    transform: translateY(-50%);
+    color: var(--main-3);
+}
+
+.form .form-inner .form-group label {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--main-3);
+    transition: 0.25s linear;
+    font-size: 14px;
+}
+
+.form-groupP {
+    margin-bottom: 15px;
+
+}
+
+.form .form-inner .form-group2 {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    /* margin-bottom: 10px; */
+
+}
+
+.form .form-inner .form-group2 .pass-box {
+    padding: 15px;
+    border: 1px solid transparent;
+    display: flex;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--main-3);
+}
+
+.form .form-inner .form-group2 .pass-box input {
+    background-color: transparent;
+    outline: none;
+    color: black;
+    font-size: 14px;
+    transition: border 0.25s linear;
+    border: none;
+    width: 100%;
+}
+
+.form .form-inner .form-group2 .pass-box input:focus+label,
+.form .form-inner .form-group2 .pass-box input:not(:placeholder-shown)+label {
+    top: 10px;
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 10px;
+    background-color: var(--main-1);
+    /* background: linear-gradient(to bottom, transparent, transparent, transparent, transparent, #EAD0B7, transparent, transparent, transparent, transparent); */
+
+    padding: 1px 5px;
+    font-size: 12px;
+    transform: translateY(-50%);
+    color: var(--main-3);
+}
+
+.form .form-inner .form-group2 .pass-box label {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--main-3);
+    transition: 0.25s linear;
+    font-size: 14px;
+}
+
+.form .form-inner .form-group2 .pass-box .eye {
+    color: var(--main-3);
+    transition: 0.25s linear;
+    font-size: 15px;
+    text-align: right;
+    cursor: pointer;
+}
+
+#payment .submit-btn {
+    /* width: 100%; */
+    /* width: 100px; */
+    border-radius: 4px;
+    padding: 13px 16px;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid var(--main-3);
+    color: white;
+    background-color: var(--main-3);
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px, rgba(0, 0, 0, 0.2) 0px 4px 10px;
+    transition: 0.2s;
+    text-align: center;
+
+    margin-top: 15px;
+}
+
+#payment .form-sort {
+    justify-content: start;
+    border-color: var(--main-3);
+}
+
+
+#payment .mobile-shoppingcart {
+    display: block;
+    padding: 0 10%;
+}
+
+#payment .mobile-shoppingcart-center>.product-cart-shopping {
+    width: 100%;
+    min-width: auto;
+}
+
+
+#payment .mobile-shoppingcart-center>.product-cart-shopping>.product-cart-shopping-img {
+    flex: 3.5;
+}
+
+
+#payment .mobile-shoppingcart-center>.product-cart-shopping>.product-cart-shopping-detail {
+    flex: 6.5;
+}
+
+@media screen and (max-width: 1300px) {
+    #payment {
+        margin: 0rem 3rem;
+        min-height: 100vh;
+
+    }
+
+    .payment-main-left>.form {
+        width: 90%;
+    }
+
+    #payment .mobile-shoppingcart {
+        display: block;
+        padding: 0 5%;
+    }
+
+
+
+
+}
+
+@media screen and (max-width: 950px) {
+    #payment {
+        margin: 0rem 2rem;
+
+    }
+
+    .payment-main {
+        /* margin-top: 2rem; */
+        flex-direction: column;
+
+    }
+
+    .payment-main-left,
+    .payment-main-right {
+        margin: 7rem 0 1rem;
+    }
+
+    .payment-main-right {
+        margin: 2rem 0 7rem;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #payment {
+        margin: 0;
+        min-height: 100vh;
+
+    }
+
+}

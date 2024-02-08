@@ -1,0 +1,141 @@
+#personal-information {
+    margin: 7rem 10rem 4rem;
+    min-height: calc(100vh - 11rem);
+
+}
+
+.personal-information {
+    display: flex;
+    margin-top: 2rem;
+    gap: 3rem;
+}
+
+.personal-information-left {
+    flex: 2.5;
+    border-right: 1px solid var(--main-3);
+
+}
+
+.list-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.list-group-item {
+    padding: 10px 15px;
+    color: var(--primary-colorBlue1);
+    background-color: var(--main-1);
+    transition: 0.5s;
+    white-space: nowrap
+}
+
+.list-group-item:hover {
+    background: var(--main-2);
+    color: var(--main-3);
+
+}
+
+.list-group-item.activated {
+    background: var(--main-2);
+    color: var(--main-3);
+    font-weight: bold;
+    /* background-color: #0d6efd; */
+}
+
+
+
+.personal-information-right {
+    flex: 7.5;
+}
+
+
+.personal-information-right>.form {
+    /* width: 80%; */
+
+}
+
+/* #payment .submit-btn, */
+.personal-information-right>.form .submit-btn {
+    /* width: 100%; */
+    width: 100px;
+    border-radius: 4px;
+    padding: 10px 16px;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid var(--main-3);
+    color: white;
+    background-color: var(--main-3);
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px, rgba(0, 0, 0, 0.2) 0px 4px 10px;
+    transition: 0.2s;
+    text-align: center;
+}
+
+.personal-information-right>.form .submit-btn:hover {
+    background-color: #fff;
+    color: var(--main-3);
+}
+
+
+
+@media screen and (max-width: 950px) {
+    .personal-information {
+        display: flex;
+        flex-direction: column;
+        margin-top: 2rem;
+        gap: 3rem;
+    }
+
+    .personal-information-left {
+        flex: 2.5;
+        border-right: none;
+
+    }
+
+    .personal-information-right {
+        flex: 7.5;
+    }
+
+    .list-group-item {
+        padding: 10px 15px;
+        color: var(--primary-colorBlue1);
+        background-color: var(--main-1);
+        transition: 0.5s;
+        text-align: center;
+    }
+
+}
+
+@media screen and (max-width: 750px) {
+    #personal-information {
+        margin: 6rem 10vw 4rem;
+        min-height: calc(100vh - 10rem);
+    }
+
+
+    .personal-information {
+        flex-direction: column;
+        margin-top: 2rem;
+        gap: 1.5rem;
+    }
+
+    .personal-information-left {
+        border-right: none;
+
+    }
+
+    .personal-information-right {}
+
+    .list-group-item {
+        text-align: center;
+    }
+
+}
+
+@media screen and (max-width: 600px) {
+    #personal-information {
+        margin: 6rem 1.5rem 4rem;
+    }
+
+}

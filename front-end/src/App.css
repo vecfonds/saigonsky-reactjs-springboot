@@ -1,0 +1,70 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --main-1: #FEF8F8;
+  --main-2: #FEE4C3;
+  --main-3: #D78787;
+  --main-text: linear-gradient(to right, #003067, #1A4F8E, #003067);
+  --color-text: #212529;
+  --primary-colorBlue1: #003067;
+  --primary-colorBlue2: #1A4F8E;
+
+  --primary-colorI: #212529;
+  --primary-colorZ: #003067;
+  --facebook-color: #3b5999;
+  --instagram-color: #e1306c;
+  --youtube-color: #de463b;
+  --twitter-color: #46c1f6;
+  --github-color: #333;
+}
+
+::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
+}
+
+html {
+  /* font-size: 62.5%; */
+  min-height: 100vh;
+  font-family: "Times New Roman", "Times", serif !important;
+  /* background: rgba(0, 0, 0, 0.1) url('/public/assets/images/bgii.jpg') center repeat; */
+  /* background: linear-gradient(to right, #b0ebff, #e7f9ff, #b0ebff); */
+  background: var(--main-1);
+  background-size: contain;
+}
+
+.headeri {
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+
+}
+
+h6 {
+  font-size: 1.8rem;
+}
+
+a,
+p {
+  font-size: 1.6rem;
+}
+
+a {
+  list-style-type: none !important;
+  text-decoration: none !important;
+
+} */

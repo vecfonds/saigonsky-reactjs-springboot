@@ -1,0 +1,45 @@
+#brandsi {
+    /* margin-top: 1rem; */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 7rem;
+}
+
+
+.brandsi {
+    margin-top: 2rem;
+    /* height: 70vh; */
+    width: 70%;
+    color: var(--primary-colorI);
+}
+
+
+
+.headeri {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+
+}
+
+.content-brandsi {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.content-brandsi img {
+    width: 300px;
+    padding: 2rem;
+}
+
+/*Mobile*/
+@media screen and (max-width: 46.1875em) {
+    .brandsi {
+        height: auto;
+        margin-top: 1rem;
+    }
+
+}

@@ -1,0 +1,29 @@
+.newshome {
+    margin: 3rem 0 8rem;
+}
+
+
+/************************ media ***************************/
+@media screen and (max-width: 1200px) {}
+
+@media screen and (max-width: 1024px) {}
+
+@media screen and (max-width: 992px) {}
+
+/* @media screen and (max-width: 768px) {
+    .setting-mobile-card {
+        max-width: 500px !important;
+    }
+
+}
+
+@media screen and (max-width: 380px) {
+    .setting-mobile-card {
+        max-width: 350px !important;
+    }
+
+    .css-h93ljk-MuiTypography-root {
+        font-size: 1.2rem !important;
+
+    }
+} */

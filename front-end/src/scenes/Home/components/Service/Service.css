@@ -1,0 +1,107 @@
+#service {
+    position: relative;
+    overflow: hidden;
+}
+
+.service {
+    background: var(--main-2);
+    display: flex;
+    padding: 3rem 6rem;
+    margin: 3rem 0;
+    gap: 6rem;
+}
+
+.service_child {
+    /* padding: 3rem 3rem; */
+    display: flex;
+    gap: 1rem;
+    position: relative;
+}
+
+.service_child:hover .service-content {
+    color: #000;
+}
+
+.service-main {}
+
+.service-title {
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--primary-colorBlue1);
+    /* color: var(--main-3); */
+
+}
+
+.service-content {
+    color: #555555;
+}
+
+
+
+/************************ media ***************************/
+@media screen and (max-width: 1200px) {
+    .service {
+        padding: 2.5rem 4rem;
+        margin: 3rem 0;
+        gap: 4rem;
+    }
+
+    .service_child {
+        gap: 0.75rem;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .service {
+        padding: 2rem 3rem;
+        margin: 3rem 0;
+        gap: 3rem;
+    }
+
+    .service_child {
+        /* gap: 0.5rem; */
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .service {
+        padding: 2rem 2.5rem;
+        margin: 3rem 0;
+        gap: 2.5rem;
+    }
+
+    .service_child {
+        /* gap: 0.5rem; */
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .service {
+        padding: 2rem 2.5rem;
+        margin: 3rem 0;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+
+    .service_child {
+        /* gap: 0.5rem; */
+        width: 40%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .service {
+        padding: 2rem 2.5rem;
+        margin: 3rem 0;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+
+    .service_child {
+        /* gap: 0.75rem; */
+        width: 100%;
+    }
+}

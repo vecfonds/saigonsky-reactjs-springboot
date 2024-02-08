@@ -1,0 +1,283 @@
+a {
+    text-decoration: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+.login-container {
+    font-family: "Work Sans", sans-serif;
+    line-height: 1.2;
+    font-weight: 300;
+    font-size: 1.6rem;
+    overflow: hidden;
+    background-color: rgb(33, 64, 154);
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+.backgr {
+    background-color: #fff;
+    margin: 3rem;
+    position: relative;
+    height: 92vh;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.28) 0px 14px 28px, rgba(0, 0, 0, 0.16) 0px 4px 10px;
+    background-image: linear-gradient(to left, rgba(200, 199, 255, 0.648), rgba(91, 55, 255, 0.205));
+    background-position: bottom left;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    height: 100%;
+}
+
+.container .container_left {
+    grid-column: span 7;
+}
+
+.container .container_right {
+    grid-column: span 5;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.container .container_right .logo {
+    flex-grow: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .container_right .logo img {
+    width: 12rem;
+    object-fit: cover;
+}
+
+.container .container_right .form {
+    flex-grow: 7;
+    max-width: 70%;
+    width: 100%;
+}
+
+.container .container_right .form .form-inner .welcome {
+    font-size: 2.6rem;
+    font-weight: 600;
+    font-style: normal;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .container_right .form .form-inner .form-group {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    margin-bottom: 1.5rem;
+}
+
+.container .container_right .form .form-inner .form-group input {
+    padding: 1.5rem;
+    border: 1px solid transparent;
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid rgb(33, 64, 154);
+    transition: border 0.25s linear;
+    background-color: transparent;
+    outline: none;
+    color: black;
+    font-size: 14px;
+}
+
+.container .container_right .form .form-inner .form-group input:focus+label,
+.container .container_right .form .form-inner .form-group input:not(:placeholder-shown)+label {
+    top: 1rem;
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 10px;
+    background-color: white;
+    padding: 1px 5px;
+    font-size: 12px;
+    transform: translateY(-50%);
+    color: rgb(33, 64, 154);
+}
+
+.container .container_right .form .form-inner .form-group label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: rgb(33, 64, 154);
+    transition: 0.25s linear;
+    font-size: 1.4rem;
+}
+
+.container .container_right .form .form-inner .form-group2 {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    margin-bottom: 1rem;
+}
+
+.container .container_right .form .form-inner .form-group2 .pass-box {
+    padding: 1.5rem;
+    border: 1px solid transparent;
+    display: flex;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid rgb(33, 64, 154);
+}
+
+.container .container_right .form .form-inner .form-group2 .pass-box input {
+    background-color: transparent;
+    outline: none;
+    color: black;
+    font-size: 14px;
+    transition: border 0.25s linear;
+    border: none;
+    width: 100%;
+}
+
+.container .container_right .form .form-inner .form-group2 .pass-box input:focus+label,
+.container .container_right .form .form-inner .form-group2 .pass-box input:not(:placeholder-shown)+label {
+    top: 1rem;
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 10px;
+    background-color: white;
+    padding: 1px 5px;
+    font-size: 12px;
+    transform: translateY(-50%);
+    color: rgb(33, 64, 154);
+}
+
+.container .container_right .form .form-inner .form-group2 .pass-box label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: rgb(33, 64, 154);
+    transition: 0.25s linear;
+    font-size: 1.4rem;
+}
+
+.container .container_right .form .form-inner .form-group2 .pass-box .eye {
+    color: rgb(33, 64, 154);
+    transition: 0.25s linear;
+    font-size: 1.7rem;
+    text-align: right;
+    cursor: pointer;
+}
+
+.container .container_right .form .form-inner .remember {
+    margin: 0;
+    margin-top: 2rem;
+    font-style: normal;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+}
+
+.container .container_right .form .form-inner .remember input {
+    margin: 0 auto;
+}
+
+.container .container_right .form .form-inner .remember span {
+    color: rgb(33, 64, 154);
+    font-weight: 600;
+}
+
+.container .container_right .form .form-inner .remember a {
+    color: rgb(33, 64, 154);
+    font-weight: 600;
+}
+
+.container .container_right .form .submit-btn {
+    width: 100%;
+    border-radius: 4px;
+    padding: 1.6rem;
+    margin-top: 3rem;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    color: white;
+    background-color: rgb(33, 64, 154);
+    font-weight: bold;
+    font-size: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px, rgba(0, 0, 0, 0.2) 0px 4px 10px;
+}
+
+.container .container_right .form .forgot-active {
+    display: none;
+    margin-top: 1rem;
+}
+
+.container .container_right .form .forgot-active a {
+    color: rgb(33, 64, 154);
+    font-weight: 600;
+}
+
+@media screen and (max-width: 576px) {
+    html {
+        font-size: 60%;
+    }
+
+    .container .container_right .form {
+        max-width: 75%;
+    }
+}
+
+@media screen and (max-width: 1080px) {
+    .container .container_right .form {
+        max-width: 70%;
+    }
+
+    .container .container_right .form .forgot-off {
+        display: none;
+    }
+
+    .container .container_right .form .forgot-active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container .active-left {
+        display: none;
+    }
+
+    .container .container_right {
+        grid-column: span 12;
+        flex-direction: column;
+    }
+
+    .container .container_right .form {
+        max-width: 65%;
+    }
+}

@@ -1,0 +1,38 @@
+.news {
+    margin: 7rem;
+}
+
+.main_news {
+    display: flex;
+    margin-top: 3.5rem;
+}
+
+/* .news_left {
+    width: 300px;
+}
+
+.news_left>img {
+    width: 100%;
+    transform: rotate(-90deg);
+}
+
+.news_right {
+    flex: 7;
+} */
+
+.news_card {
+    margin: 1.5rem auto;
+    margin-top: 0;
+    display: flex;
+}
+
+.news_card:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.news_card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
