@@ -44,7 +44,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token){
         if(token.getExpireDate().compareTo(Instant.now())<0){
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new login request");
+            throw new TokenRefreshException(token.getToken(), "Refresh token đã hết hạn. Vui lòng đăng nhập lại");
         }
         return token;
     }
@@ -55,7 +55,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Transactional
-    public int deleteByUsername(String username){
-        return refreshTokenRepository.deleteByUser(userRepository.findByUsername(username).get());
+    public int deleteByPhoneNumber(String phoneNumber){
+        return refreshTokenRepository.deleteByUser(userRepository.findByPhoneNumber(phoneNumber).get());
     }
 }

@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public interface RefreshTokenService {
@@ -13,9 +14,7 @@ public interface RefreshTokenService {
     public RefreshToken generateRefreshToken(Long userId);
 
     public RefreshToken verifyExpiration(RefreshToken token);
-    @Transactional
-    public int deleteByUserId(Long userId);
 
     @Transactional
-    public int deleteByUsername(String username);
+    public int deleteByPhoneNumber(String phoneNumber);
 }

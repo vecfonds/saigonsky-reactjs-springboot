@@ -25,15 +25,25 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
         prePostEnabled = true)
 public class SecurityConfig {
 
-    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**"};
+    private static final String[] PUBLIC_URL = {
+            "/api/v1/auth/register/**",
+            "/api/v1/auth/login/**",
+            "/api/v1/auth/refreshtoken/**",
+            "api/v1/shopping-cart/**",
+//            "api/v1/user/**"
+    };
 
-    private JwtAuthEntryPoint jwtAuthEntryPoint;
-    private final CustomUserDetailsService userDetailsService;
+//    private static final String[] PRIVATE_URL = {
+//            "/api/v1/auth/logout/**",
+//    };
+
+
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+//    private final CustomUserDetailsService userDetailsService;
 
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint jwtAuthEntryPoint) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(JwtAuthEntryPoint jwtAuthEntryPoint) {
         this.jwtAuthEntryPoint = jwtAuthEntryPoint;
     }
 
@@ -42,7 +52,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL)
+//                        req.anyRequest().permitAll()
+                        req.requestMatchers(PUBLIC_URL)
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

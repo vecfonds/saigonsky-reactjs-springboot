@@ -32,7 +32,18 @@ public class ExceptionGlobalHandler {
         return new ErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
                 new Date(),
-                ex.getMessage(),
-                request.getDescription(false));
+                ex.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlerNotFoundException(NotFoundException ex, WebRequest req){
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), new Date(), ex.getMessage());
+    }
+
+    @ExceptionHandler(ObjectExistsException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public ErrorResponse handlerObjectExistsException(ObjectExistsException ex, WebRequest req){
+        return new ErrorResponse(HttpStatus.OK.value(), new Date(), ex.getMessage());
     }
 }

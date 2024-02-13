@@ -2,9 +2,9 @@ package com.vecfonds.backend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,27 +12,31 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
-@Data
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank(message = "The fullname field can't be blank")
-    private String fullname;
-    @NotBlank(message = "The phone number field can't be blank")
+    @NotBlank(message = "Họ và tên không được để trống")
     private String username;
-    @NotBlank(message = "The password field can't be blank")
+
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^\\d{10}$", message = "Số điện thoại không hợp lệ")
+    private String phoneNumber;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
-    @NotBlank(message = "The address field can't be blank")
+    @NotBlank(message = "Địa chỉ không được để trống")
     private String address;
 
     @CreationTimestamp
@@ -41,20 +45,14 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = new LinkedList<>();
+    private List<Role> roles = new ArrayList<>();
 
-    @Override
-    public String getPassword(){
-        return password;
-    }
-
-    @Override
-    public String getUsername(){
-        return username;
-    }
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
+    private ShoppingCart shoppingCart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

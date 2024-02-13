@@ -1,12 +1,12 @@
 package com.vecfonds.backend.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class LoginRequest {
-    @NotBlank(message = "The username field can't be blank")
-    private String username;
-    @NotBlank(message = "The password field can't be blank")
+    private String phoneNumber;
     private String password;
 }

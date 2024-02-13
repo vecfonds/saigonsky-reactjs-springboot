@@ -18,9 +18,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
         return  userRepository
-                .findByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("Username not found"));
+                .findByPhoneNumber(phoneNumber)
+                .orElseThrow(()-> new UsernameNotFoundException("Số điện thoại không được tìm thấy"));
     }
 }

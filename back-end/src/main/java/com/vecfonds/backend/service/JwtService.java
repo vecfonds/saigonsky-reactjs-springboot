@@ -5,11 +5,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface JwtService {
+    public String getPhoneNumberFromJWT(String token);
 
-    public String generateToken(Authentication authentication);
-    public String getUsernameFromJWT(String token);
+    public Boolean validateToken(String token);
 
-    public boolean validateToken(String token);
-
-    public String generateTokenFromUsername(String username);
+    public String generateTokenFromPhoneNumber(String phoneNumber);
 }
