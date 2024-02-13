@@ -1,6 +1,4 @@
 package com.vecfonds.backend.service;
-
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service

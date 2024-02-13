@@ -4,9 +4,7 @@ import com.vecfonds.backend.entity.User;
 import com.vecfonds.backend.payload.request.dto.UserDTO;
 import com.vecfonds.backend.payload.response.MessageResponse;
 import com.vecfonds.backend.payload.response.UserResponse;
-import com.vecfonds.backend.repository.UserRepository;
 import com.vecfonds.backend.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +19,9 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
-
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper,
-                          UserRepository userRepository) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.modelMapper = modelMapper;
-        this.userRepository = userRepository;
     }
 
     @GetMapping("user")
@@ -39,7 +31,6 @@ public class UserController {
 //
 //        User user = (User) authentication.getPrincipal();
 
-//        User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
         UserResponse userResponse = userService.getUser(userSession);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }

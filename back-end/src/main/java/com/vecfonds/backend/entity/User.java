@@ -3,14 +3,12 @@ package com.vecfonds.backend.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -50,7 +48,7 @@ public class User implements UserDetails {
     inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,orphanRemoval = true)
     @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
     private ShoppingCart shoppingCart;
 

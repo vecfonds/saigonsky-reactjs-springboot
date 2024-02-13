@@ -1,6 +1,5 @@
 package com.vecfonds.backend.payload.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data

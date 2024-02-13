@@ -1,9 +1,7 @@
 package com.vecfonds.backend.entity;
 
-import com.vecfonds.backend.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.Instant;
 
 @Entity(name = "refreshtoken")
@@ -17,7 +15,7 @@ public class RefreshToken {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 

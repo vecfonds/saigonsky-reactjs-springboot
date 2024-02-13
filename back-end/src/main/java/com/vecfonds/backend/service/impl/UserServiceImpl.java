@@ -9,41 +9,32 @@ import com.vecfonds.backend.payload.request.dto.UserDTO;
 import com.vecfonds.backend.payload.response.UserResponse;
 import com.vecfonds.backend.repository.RoleRepository;
 import com.vecfonds.backend.repository.UserRepository;
-import com.vecfonds.backend.service.JwtService;
 import com.vecfonds.backend.service.RefreshTokenService;
 import com.vecfonds.backend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Component
 public class UserServiceImpl implements UserService {
-    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
-
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtService jwtService, RefreshTokenService refreshTokenService, ModelMapper modelMapper) {
-        this.authenticationManager = authenticationManager;
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
         this.modelMapper = modelMapper;
     }
-
 
     @Override
     public Boolean createUser(UserDTO request) {
@@ -96,7 +87,6 @@ public class UserServiceImpl implements UserService {
         }
 
         refreshTokenService.deleteByPhoneNumber(phoneNumber);
-
 
         user.setUsername(userDTO.getUsername());
         user.setPhoneNumber(userDTO.getPhoneNumber());
