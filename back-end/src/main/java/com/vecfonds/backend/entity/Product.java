@@ -2,7 +2,10 @@ package com.vecfonds.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table
 @Getter
@@ -22,14 +25,21 @@ public class Product {
   @ManyToOne
   @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "fk_product_category"))
   private Category category;
+//  private String type;
 
-  @OneToOne
+  @OneToOne(orphanRemoval = true)
   @JoinColumn(name = "discount_id", referencedColumnName = "id")
   private Discount discount;
 
-//  private String type;
-@Column(name = "price", nullable = false, precision = 19, scale = 3)
-private BigDecimal price = BigDecimal.valueOf(0);
+  @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+  private List<CartItem> products = new ArrayList<>();
+
+  @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  private List<BillDetail> orderItems = new ArrayList<>();
+
+  @Column(name = "price", nullable = false)
+  private Double price = 0.0;
+
   private Integer quantity;
   private String description;
   private String material;

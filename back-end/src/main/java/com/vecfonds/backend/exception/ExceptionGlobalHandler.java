@@ -35,9 +35,9 @@ public class ExceptionGlobalHandler {
                 ex.getMessage());
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handlerNotFoundException(NotFoundException ex, WebRequest req){
+    public ErrorResponse handlerNotFoundException(ResourceNotFoundException ex, WebRequest req){
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), new Date(), ex.getMessage());
     }
 
@@ -45,5 +45,11 @@ public class ExceptionGlobalHandler {
     @ResponseStatus(HttpStatus.OK)
     public ErrorResponse handlerObjectExistsException(ObjectExistsException ex, WebRequest req){
         return new ErrorResponse(HttpStatus.OK.value(), new Date(), ex.getMessage());
+    }
+
+    @ExceptionHandler(APIException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerAPIException(APIException ex, WebRequest req){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage());
     }
 }

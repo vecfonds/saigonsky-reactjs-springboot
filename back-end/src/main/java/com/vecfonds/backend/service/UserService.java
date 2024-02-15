@@ -1,6 +1,7 @@
 package com.vecfonds.backend.service;
 
 import com.vecfonds.backend.entity.User;
+import com.vecfonds.backend.payload.request.RegisterRequest;
 import com.vecfonds.backend.payload.request.dto.UserDTO;
 import com.vecfonds.backend.payload.response.UserResponse;
 import org.springframework.stereotype.Service;
@@ -9,9 +10,9 @@ import java.util.List;
 
 @Service
 public interface UserService {
-    Boolean createUser(UserDTO request);
+    Boolean createUser(RegisterRequest request);
 
-    UserResponse getUser(User user);
+    UserResponse getUser(User userSession);
 
     List<UserResponse> getListUser();
 

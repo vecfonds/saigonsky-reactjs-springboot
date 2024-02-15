@@ -3,8 +3,9 @@ package com.vecfonds.backend.service.impl;
 import com.vecfonds.backend.entity.Role;
 import com.vecfonds.backend.entity.ShoppingCart;
 import com.vecfonds.backend.entity.User;
-import com.vecfonds.backend.exception.NotFoundException;
+import com.vecfonds.backend.exception.ResourceNotFoundException;
 import com.vecfonds.backend.exception.ObjectExistsException;
+import com.vecfonds.backend.payload.request.RegisterRequest;
 import com.vecfonds.backend.payload.request.dto.UserDTO;
 import com.vecfonds.backend.payload.response.UserResponse;
 import com.vecfonds.backend.repository.RoleRepository;
@@ -15,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean createUser(UserDTO request) {
+    public Boolean createUser(RegisterRequest request) {
         if(userRepository.existsByPhoneNumber(request.getPhoneNumber())){
             return false;
         }
@@ -56,7 +58,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUser(User user) {
+    public UserResponse getUser(User userSession) {
+        User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
+
         return modelMapper.map(user, UserResponse.class);
     }
 
@@ -68,6 +72,7 @@ public class UserServiceImpl implements UserService {
             result.add(modelMapper.map(user, UserResponse.class));
         }
         return result;
+
     }
 
 
@@ -80,7 +85,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateUser(String phoneNumber, UserDTO userDTO) {
         User user = userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(()-> new NotFoundException("Không tìm thấy tài khoản trong hệ thống!"));
+                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy tài khoản trong hệ thống!"));
 
         if(userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())){
             throw new ObjectExistsException("Số điện thoại mới đã được sử dụng!");
@@ -100,7 +105,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deleteUser(String phoneNumber) {
         User user = userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(()-> new NotFoundException("Không tìm thấy tài khoản trong hệ thống!"));
+                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy tài khoản trong hệ thống!"));
 
         refreshTokenService.deleteByPhoneNumber(phoneNumber);
 

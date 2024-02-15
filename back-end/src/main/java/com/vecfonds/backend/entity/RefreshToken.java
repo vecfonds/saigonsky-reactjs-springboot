@@ -15,7 +15,7 @@ public class RefreshToken {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 

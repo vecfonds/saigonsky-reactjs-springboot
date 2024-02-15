@@ -4,7 +4,7 @@ import com.vecfonds.backend.entity.RefreshToken;
 import com.vecfonds.backend.entity.User;
 import com.vecfonds.backend.exception.TokenRefreshException;
 import com.vecfonds.backend.payload.request.LoginRequest;
-import com.vecfonds.backend.payload.request.dto.UserDTO;
+import com.vecfonds.backend.payload.request.RegisterRequest;
 import com.vecfonds.backend.payload.request.TokenRefreshRequest;
 import com.vecfonds.backend.payload.response.JwtResponse;
 import com.vecfonds.backend.payload.response.MessageResponse;
@@ -48,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserDTO request){
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
         if(userService.createUser(request)){
             return new ResponseEntity<>(new MessageResponse("Đăng ký tài khoản thành công!"), HttpStatus.OK);
         }

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
 
 @Builder
@@ -23,8 +23,12 @@ public class Discount {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "discount_percent", nullable = false, precision = 4, scale = 2)
-    private BigDecimal discountPercent;
+    @Column(name = "discount_percent", nullable = false)
+    private Double discountPercent;
+
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
 
     @CreationTimestamp
     private LocalDateTime createAt;

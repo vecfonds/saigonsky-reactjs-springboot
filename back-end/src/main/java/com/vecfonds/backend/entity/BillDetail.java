@@ -4,28 +4,27 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cart_item")
-@Getter
-@Setter
+@Table(name = "bill_detail")
 @Builder
 @NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
-public class CartItem {
+public class BillDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "shoppingCart_id", foreignKey = @ForeignKey(name = "fk_cartItem_shoppingCart"))
-    private ShoppingCart shoppingCart;
+    @JoinColumn(name = "bill_id", foreignKey = @ForeignKey(name = "fk_billDetail_bill"))
+    private Bill bill;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_cartItem_product"))
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_billDetail_product"))
     private Product product;
 
     @Column(name = "quantity", nullable = false)
