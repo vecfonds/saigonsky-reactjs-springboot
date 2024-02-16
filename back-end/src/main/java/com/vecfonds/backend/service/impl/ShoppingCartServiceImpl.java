@@ -36,7 +36,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         this.userRepository = userRepository;
     }
 
-    private ShoppingCartDTO convertShoppingCartDTO(ShoppingCart shoppingCart){
+    @Override
+    public ShoppingCartDTO convertShoppingCartDTO(ShoppingCart shoppingCart){
         ShoppingCartDTO shoppingCartDTO = modelMapper.map(shoppingCart, ShoppingCartDTO.class);
 
         List<CartItemDTO> cartItemDTOS = shoppingCart.getCartItems().stream()
@@ -162,7 +163,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getProduct().getPrice()*cartItem.getQuantity());
         shoppingCartRepository.save(shoppingCart);
 
-        cartItemRepository.deleteByIdCartItem(cartItem.getId());
+        cartItemRepository.deleteByCartItemId(cartItem.getId());
 //         cartItemRepository.deleteByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCartId, productId, size, color);
 
         return "Sản phẩm " + product.getName() + " với size = " + size + ", color = " + color + " đã xóa khỏi giỏ hàng";

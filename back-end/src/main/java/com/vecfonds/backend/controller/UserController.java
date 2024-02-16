@@ -12,8 +12,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/v1")
 public class UserController {
@@ -31,14 +29,14 @@ public class UserController {
 //
 //        User user = (User) authentication.getPrincipal();
 
-        UserResponse userResponse = userService.getUser(userSession);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        UserDTO userDTO = userService.getUser(userSession);
+        return new ResponseEntity<>(userDTO, HttpStatus.FOUND);
     }
 
     @PutMapping("user")
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal User userSession, @RequestBody UserDTO request){
-        UserResponse userResponse = userService.updateUser(userSession.getPhoneNumber(), request);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        UserDTO userDTO = userService.updateUser(userSession.getPhoneNumber(), request);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("user")
@@ -50,15 +48,20 @@ public class UserController {
 
     @Secured("ADMIN")
     @GetMapping("admin/users")
-    public ResponseEntity<?> getListUser(){
-        List<UserResponse> listUser = userService.getListUser();
-        return new ResponseEntity<>(listUser, HttpStatus.OK);
+    public ResponseEntity<?> getListUser(
+            @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "2", required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder
+    ){
+        UserResponse userResponse = userService.getListUser(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(userResponse, HttpStatus.FOUND);
     }
 
     @Secured("ADMIN")
     @GetMapping("admin/users/{phoneNumber}")
     public ResponseEntity<?> getUserByPhoneNumber(@PathVariable String phoneNumber){
-        UserResponse userResponse = userService.getUserByPhoneNumber(phoneNumber);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        UserDTO userDTO = userService.getUserByPhoneNumber(phoneNumber);
+        return new ResponseEntity<>(userDTO, HttpStatus.FOUND);
     }
 }

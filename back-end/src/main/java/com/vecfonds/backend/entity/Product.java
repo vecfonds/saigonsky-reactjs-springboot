@@ -2,7 +2,10 @@ package com.vecfonds.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,4 +50,10 @@ public class Product {
   private String album;
   private String model;
   private String connect;
+
+  @CreationTimestamp
+  private LocalDateTime createAt;
+
+  @UpdateTimestamp
+  private LocalDateTime modifiedAt;
 }

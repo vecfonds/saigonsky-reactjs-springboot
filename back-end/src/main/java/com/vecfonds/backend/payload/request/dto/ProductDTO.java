@@ -2,6 +2,8 @@ package com.vecfonds.backend.payload.request.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class ProductDTO {
     private Long id;
@@ -16,4 +18,5 @@ public class ProductDTO {
     private String album;
     private String model;
     private String connect;
+    private LocalDateTime createAt;
 }
