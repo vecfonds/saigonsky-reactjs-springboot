@@ -28,6 +28,9 @@ public class CartItem {
     @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_cartItem_product"))
     private Product product;
 
+    @Column(name = "productPrice", nullable = false)
+    private Double itemPrice;
+
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 

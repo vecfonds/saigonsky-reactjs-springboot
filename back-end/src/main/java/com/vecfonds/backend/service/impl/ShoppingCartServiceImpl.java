@@ -26,6 +26,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
+//    private final ProductService productService;
+//
+//    @Autowired
+//    public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository, ModelMapper modelMapper, ProductRepository productRepository, CartItemRepository cartItemRepository, UserRepository userRepository, ProductService productService) {
+//        this.shoppingCartRepository = shoppingCartRepository;
+//        this.modelMapper = modelMapper;
+//        this.productRepository = productRepository;
+//        this.cartItemRepository = cartItemRepository;
+//        this.userRepository = userRepository;
+//        this.productService = productService;
+//    }
 
     @Autowired
     public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository, ModelMapper modelMapper, ProductRepository productRepository, CartItemRepository cartItemRepository, UserRepository userRepository) {
@@ -42,11 +53,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         List<CartItemDTO> cartItemDTOS = shoppingCart.getCartItems().stream()
                 .map(p -> {
+//                    ProductDTO productDTO = productService.convertProductDTO(p.getProduct());
+
+//                    CategoryDTO categoryDTO = modelMapper.map(p.getProduct().getCategory(), CategoryDTO.class);
+//                    productDTO.setCategory(categoryDTO);
+//                    DiscountDTO discountDTO = modelMapper.map(p.getProduct().getDiscount(), DiscountDTO.class);
+//                    productDTO.setDiscount(discountDTO);
+
+
                     ProductDTO productDTO = modelMapper.map(p.getProduct(), ProductDTO.class);
                     CategoryDTO categoryDTO = modelMapper.map(p.getProduct().getCategory(), CategoryDTO.class);
                     productDTO.setCategory(categoryDTO);
-                    DiscountDTO discountDTO = modelMapper.map(p.getProduct().getDiscount(), DiscountDTO.class);
-                    productDTO.setDiscount(discountDTO);
+                    productDTO.setImages(p.getProduct().getImages().stream().map(element -> modelMapper.map(element, ImageDTO.class)).toList());
                     CartItemDTO cartItemDTO = modelMapper.map(p, CartItemDTO.class);
                     cartItemDTO.setProduct(productDTO);
                     return cartItemDTO;
@@ -81,7 +99,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         CartItem newCartItem = new CartItem();
-
+        newCartItem.setItemPrice(product.getPrice());
         newCartItem.setQuantity(quantity);
         newCartItem.setColor(color);
         newCartItem.setSize(size);
@@ -94,7 +112,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 //        product.setQuantity(product.getQuantity() - quantity);
 //        productRepository.save(product);
 
-        shoppingCart.setTotal(shoppingCart.getTotal() + product.getPrice()*quantity);
+        shoppingCart.setTotal(shoppingCart.getTotal() + newCartItem.getItemPrice()* newCartItem.getQuantity());
 
         shoppingCartRepository.save(shoppingCart);
 
@@ -141,15 +159,35 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getProduct().getPrice()*cartItem.getQuantity() + product.getPrice()*quantity);
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
-        shoppingCartRepository.save(shoppingCart);
+        ShoppingCart shoppingCartSaved = shoppingCartRepository.save(shoppingCart);
 
-        return convertShoppingCartDTO(shoppingCart);
+        return convertShoppingCartDTO(shoppingCartSaved);
     }
 
     @Override
     public String deleteProductInCart(Long shoppingCartId, Long productId, String size, String color) {
         ShoppingCart shoppingCart = shoppingCartRepository.findById(shoppingCartId)
                 .orElseThrow(()-> new ResourceNotFoundException("ShoppingCart", "shoppingCartId", shoppingCartId));
+
+        if(size.equalsIgnoreCase("all")&&color.equalsIgnoreCase("all")) {
+            List<CartItem> cartItems = cartItemRepository.findCartItemByShoppingCartIdAndProductId(shoppingCartId, productId);
+
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+            for (CartItem cartItem : cartItems){
+                if (cartItem == null) {
+                    throw new APIException("Sản phẩm " + product.getName() + " với size = " + size + ", color = " + color + " không tìm thấy trong giỏ hàng");
+                }
+
+                shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getItemPrice()*cartItem.getQuantity());
+                shoppingCartRepository.save(shoppingCart);
+
+                cartItemRepository.deleteByCartItemId(cartItem.getId());
+            }
+
+            return "Sản phẩm " + product.getName() + " đã xóa khỏi giỏ hàng";
+        }
 
         CartItem cartItem = cartItemRepository.findCartItemByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCartId, productId, size, color);
 
@@ -160,7 +198,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             throw new APIException("Sản phẩm " + product.getName() + " với size = " + size + ", color = " + color + " không tìm thấy trong giỏ hàng");
         }
 
-        shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getProduct().getPrice()*cartItem.getQuantity());
+        shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getItemPrice()*cartItem.getQuantity());
         shoppingCartRepository.save(shoppingCart);
 
         cartItemRepository.deleteByCartItemId(cartItem.getId());

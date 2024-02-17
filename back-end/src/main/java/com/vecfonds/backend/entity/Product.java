@@ -26,22 +26,25 @@ public class Product {
   private String name;
 
   @ManyToOne
+
   @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "fk_product_category"))
   private Category category;
 //  private String type;
 
-  @OneToOne(orphanRemoval = true)
-  @JoinColumn(name = "discount_id", referencedColumnName = "id")
-  private Discount discount;
+//  @OneToOne(orphanRemoval = true)
+//  @JoinColumn(name = "discount_id", referencedColumnName = "id")
+//  private Discount discount;
+
+  @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER, orphanRemoval = true)
+  private List<Image> images = new ArrayList<>();
 
   @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-  private List<CartItem> products = new ArrayList<>();
+  private List<CartItem> cartItems = new ArrayList<>();
 
   @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-  private List<BillDetail> orderItems = new ArrayList<>();
-
+  private List<BillDetail> billDetails = new ArrayList<>();
   @Column(name = "price", nullable = false)
-  private Double price = 0.0;
+  private Double price;
 
   private Integer quantity;
   private String description;

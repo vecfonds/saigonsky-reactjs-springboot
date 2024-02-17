@@ -67,15 +67,17 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    public UserDTO convertUserDTO(User user){
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        ShoppingCartDTO shoppingCartDTO = shoppingCartService.convertShoppingCartDTO(user.getShoppingCart());
+        userDTO.setShoppingCart(shoppingCartDTO);
+        return userDTO;
+    }
+
     @Override
     public UserDTO getUser(User userSession) {
         User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-
-        ShoppingCartDTO shoppingCartDTO = shoppingCartService.convertShoppingCartDTO(user.getShoppingCart());
-        userDTO.setShoppingCart(shoppingCartDTO);
-
-        return userDTO;
+        return convertUserDTO(user);
     }
 
     @Override
@@ -89,12 +91,7 @@ public class UserServiceImpl implements UserService {
 
         List<User> listUser = pageUser.getContent();
 
-        List<UserDTO> userDTOS = listUser.stream().map(user->{
-            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-            ShoppingCartDTO shoppingCartDTO = shoppingCartService.convertShoppingCartDTO(user.getShoppingCart());
-            userDTO.setShoppingCart(shoppingCartDTO);
-            return userDTO;
-        }).toList();
+        List<UserDTO> userDTOS = listUser.stream().map(this::convertUserDTO).toList();
 
         UserResponse userResponse = modelMapper.map(pageUser, UserResponse.class);
         userResponse.setContent(userDTOS);
@@ -105,7 +102,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserByPhoneNumber(String phoneNumber) {
         User user = userRepository.findByPhoneNumber(phoneNumber).get();
-        return modelMapper.map(user, UserDTO.class);
+        return convertUserDTO(user);
     }
 
     @Override
@@ -122,9 +119,9 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNumber(userDTO.getPhoneNumber());
         user.setAddress(userDTO.getAddress());
 
-        userRepository.save(user);
+        user = userRepository.save(user);
 
-        return modelMapper.map(user, UserDTO.class);
+        return convertUserDTO(user);
     }
 
     @Override

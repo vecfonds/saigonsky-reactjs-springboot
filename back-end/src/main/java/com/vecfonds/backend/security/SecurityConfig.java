@@ -1,6 +1,5 @@
 package com.vecfonds.backend.security;
 
-import com.vecfonds.backend.service.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +29,8 @@ public class SecurityConfig {
             "/api/v1/auth/login/**",
             "/api/v1/auth/refreshtoken/**",
             "api/v1/shopping-cart/**",
+            "/api/v1/category/**",
+            "api/v1/product/**"
 //            "api/v1/user/**"
     };
 
