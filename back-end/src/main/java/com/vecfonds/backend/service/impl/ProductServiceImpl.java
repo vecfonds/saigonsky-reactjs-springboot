@@ -1,6 +1,7 @@
 package com.vecfonds.backend.service.impl;
 
 import com.vecfonds.backend.entity.Category;
+import com.vecfonds.backend.entity.Image;
 import com.vecfonds.backend.entity.Product;
 import com.vecfonds.backend.entity.ShoppingCart;
 import com.vecfonds.backend.exception.ObjectExistsException;
@@ -12,6 +13,7 @@ import com.vecfonds.backend.payload.response.ProductResponse;
 import com.vecfonds.backend.repository.CategoryRepository;
 import com.vecfonds.backend.repository.ProductRepository;
 import com.vecfonds.backend.repository.ShoppingCartRepository;
+import com.vecfonds.backend.service.FileService;
 import com.vecfonds.backend.service.ProductService;
 import com.vecfonds.backend.service.ShoppingCartService;
 import org.modelmapper.ModelMapper;
@@ -21,7 +23,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -31,23 +35,17 @@ public class ProductServiceImpl implements ProductService {
     private final ModelMapper modelMapper;
     private final ShoppingCartService shoppingCartService;
     private final ShoppingCartRepository shoppingCartRepository;
+    private final FileService fileService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ShoppingCartService shoppingCartService,
-                              ShoppingCartRepository shoppingCartRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ShoppingCartService shoppingCartService, ShoppingCartRepository shoppingCartRepository, FileService fileService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
         this.shoppingCartService = shoppingCartService;
         this.shoppingCartRepository = shoppingCartRepository;
+        this.fileService = fileService;
     }
-
-//    @Autowired
-//    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
-//        this.productRepository = productRepository;
-//        this.categoryRepository = categoryRepository;
-//        this.modelMapper = modelMapper;
-//    }
 
     @Override
     public ProductDTO convertProductDTO(Product product){
@@ -167,5 +165,40 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(productInDB);
 
         return "Sản phẩm với productId " + productId + " đã xóa thành công!";
+    }
+
+    @Override
+    public ProductDTO createProductImageLink(Long productId, Image image) {
+        Product productInDB = productRepository.findById(productId)
+                .orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+
+        image.setProduct(productInDB);
+
+        List<Image> images = productInDB.getImages();
+        images.add(image);
+        productInDB.setImages(images);
+        Product productUpdated = productRepository.save(productInDB);
+
+        return convertProductDTO(productUpdated);
+    }
+
+    @Override
+    public ProductDTO createProductImageMultipartFile(Long productId, MultipartFile image, Integer main) throws IOException {
+        Product productInDB = productRepository.findById(productId)
+                .orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+
+        String fileName = fileService.uploadImage("images/", image);
+
+        Image newImage = new Image();
+        newImage.setContent(fileName);
+        newImage.setMain(main);
+        newImage.setProduct(productInDB);
+
+        List<Image> images = productInDB.getImages();
+        images.add(newImage);
+        productInDB.setImages(images);
+        Product productUpdated = productRepository.save(productInDB);
+
+        return convertProductDTO(productUpdated);
     }
 }

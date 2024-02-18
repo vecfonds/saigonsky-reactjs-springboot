@@ -1,5 +1,6 @@
 package com.vecfonds.backend.controller;
 
+import com.vecfonds.backend.entity.Image;
 import com.vecfonds.backend.entity.Product;
 import com.vecfonds.backend.payload.request.dto.ProductDTO;
 import com.vecfonds.backend.payload.response.MessageResponse;
@@ -11,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("api/v1/product")
@@ -76,5 +80,17 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
         String message = productService.deleteProduct(productId);
         return new ResponseEntity<>(new MessageResponse(message), HttpStatus.OK);
+    }
+
+    @PutMapping("{productId}/image-link")
+    public ResponseEntity<?> addProductImageLink(@PathVariable Long productId, @Valid @RequestBody Image image){
+        ProductDTO productDTO = productService.createProductImageLink(productId, image);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("{productId}/image-multipart-file")
+    public ResponseEntity<?> addProductImageMultipartFile(@PathVariable Long productId, MultipartFile image, Integer main) throws IOException {
+        ProductDTO productDTO = productService.createProductImageMultipartFile(productId, image, main);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 }
