@@ -2,10 +2,6 @@ package com.vecfonds.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "cart_item")
@@ -39,10 +35,4 @@ public class CartItem {
 
     @Column(name = "color", nullable = false)
     private String color;
-
-    @CreationTimestamp
-    private LocalDateTime createAt;
-
-    @UpdateTimestamp
-    private LocalDateTime modifiedAt;
 }

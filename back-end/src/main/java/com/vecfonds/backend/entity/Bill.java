@@ -1,6 +1,8 @@
 package com.vecfonds.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,16 +30,18 @@ public class Bill {
     @Column(name = "pay-method", nullable = false)
     private String payMethod;
 
-    private String status;
-
-    private String note;
-
     @OneToMany(mappedBy = "bill", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     private List<BillDetail> billDetails = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_bill_user"))
-    private User user;
+    @NotBlank(message = "Họ và tên không được để trống")
+    private String username;
+
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^\\d{10}$", message = "Số điện thoại không hợp lệ")
+    private String phoneNumber;
+
+    @NotBlank(message = "Địa chỉ không được để trống")
+    private String address;
 
     @CreationTimestamp
     private LocalDateTime createAt;

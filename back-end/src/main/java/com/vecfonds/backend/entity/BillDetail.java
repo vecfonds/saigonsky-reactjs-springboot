@@ -2,9 +2,6 @@ package com.vecfonds.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bill_detail")
@@ -27,6 +24,9 @@ public class BillDetail {
     @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_billDetail_product"))
     private Product product;
 
+    @Column(name = "productPrice", nullable = false)
+    private Double itemPrice;
+
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
@@ -35,10 +35,4 @@ public class BillDetail {
 
     @Column(name = "color", nullable = false)
     private String color;
-
-    @CreationTimestamp
-    private LocalDateTime createAt;
-
-    @UpdateTimestamp
-    private LocalDateTime modifiedAt;
 }

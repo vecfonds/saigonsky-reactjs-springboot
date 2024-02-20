@@ -9,8 +9,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -52,8 +55,6 @@ public class User implements UserDetails {
     @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
     private ShoppingCart shoppingCart;
 
-    @OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE } ,orphanRemoval = true)
-    private List<Bill> bills = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
