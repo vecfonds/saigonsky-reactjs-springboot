@@ -59,9 +59,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO updateCategory(Long categoryId, Category category) {
-//        Category categorySaved = categoryRepository.findById(categoryId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Category", "CategoryId", categoryId));
-
         if(categoryRepository.findById(categoryId).isEmpty()){
             throw new ResourceNotFoundException("Category", "CategoryId", categoryId);
         }

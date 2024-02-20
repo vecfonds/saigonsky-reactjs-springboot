@@ -18,11 +18,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Value("${application.security.jwt.refresh-token}")
     private Long refreshTokenExpire;
 
-    @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+    public UserRepository userRepository;
 
     @Autowired
-    public UserRepository userRepository;
+    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
+    }
 
     public Optional<RefreshToken> findByToken(String token){
         return refreshTokenRepository.findByToken(token);

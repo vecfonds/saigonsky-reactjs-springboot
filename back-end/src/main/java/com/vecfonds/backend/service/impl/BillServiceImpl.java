@@ -24,7 +24,6 @@ public class BillServiceImpl implements BillService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final BillRepository billRepository;
-
     private final CartItemRepository cartItemRepository;
 
     @Autowired

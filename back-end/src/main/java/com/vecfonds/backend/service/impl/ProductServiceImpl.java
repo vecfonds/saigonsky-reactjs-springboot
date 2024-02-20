@@ -1,21 +1,17 @@
 package com.vecfonds.backend.service.impl;
 
-import com.vecfonds.backend.entity.Category;
-import com.vecfonds.backend.entity.Image;
-import com.vecfonds.backend.entity.Product;
-import com.vecfonds.backend.entity.ShoppingCart;
+import com.vecfonds.backend.entity.*;
 import com.vecfonds.backend.exception.ObjectExistsException;
 import com.vecfonds.backend.exception.ResourceNotFoundException;
 import com.vecfonds.backend.payload.request.dto.CategoryDTO;
 import com.vecfonds.backend.payload.request.dto.ImageDTO;
 import com.vecfonds.backend.payload.request.dto.ProductDTO;
 import com.vecfonds.backend.payload.response.ProductResponse;
-import com.vecfonds.backend.repository.CategoryRepository;
-import com.vecfonds.backend.repository.ProductRepository;
-import com.vecfonds.backend.repository.ShoppingCartRepository;
+import com.vecfonds.backend.repository.*;
 import com.vecfonds.backend.service.FileService;
 import com.vecfonds.backend.service.ProductService;
 import com.vecfonds.backend.service.ShoppingCartService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@Transactional
 @Component
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
@@ -36,15 +33,17 @@ public class ProductServiceImpl implements ProductService {
     private final ShoppingCartService shoppingCartService;
     private final ShoppingCartRepository shoppingCartRepository;
     private final FileService fileService;
+    private final BillRepository billRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ShoppingCartService shoppingCartService, ShoppingCartRepository shoppingCartRepository, FileService fileService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, ShoppingCartService shoppingCartService, ShoppingCartRepository shoppingCartRepository, FileService fileService, BillRepository billRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
         this.shoppingCartService = shoppingCartService;
         this.shoppingCartRepository = shoppingCartRepository;
         this.fileService = fileService;
+        this.billRepository = billRepository;
     }
 
     @Override
@@ -156,6 +155,11 @@ public class ProductServiceImpl implements ProductService {
     public String deleteProduct(Long productId) {
         Product productInDB = productRepository.findById(productId)
                 .orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+
+        List<Bill> bills = billRepository.findBillByProductId(productId);
+        if(!bills.isEmpty()){
+            throw new ObjectExistsException("Product với productId="+productId+" có chứa giao dịch");
+        }
 
         List<ShoppingCart> shoppingCarts = shoppingCartRepository.findShoppingCartByProductId(productId);
         for(ShoppingCart shoppingCart:shoppingCarts){

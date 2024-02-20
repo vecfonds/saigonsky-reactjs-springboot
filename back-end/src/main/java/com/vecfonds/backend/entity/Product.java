@@ -43,6 +43,7 @@ public class Product {
 
   @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   private List<BillDetail> billDetails = new ArrayList<>();
+
   @Column(name = "price", nullable = false)
   private Double price;
 

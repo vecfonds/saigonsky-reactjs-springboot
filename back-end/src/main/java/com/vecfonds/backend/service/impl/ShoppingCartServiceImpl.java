@@ -8,17 +8,24 @@ import com.vecfonds.backend.exception.APIException;
 import com.vecfonds.backend.exception.ObjectExistsException;
 import com.vecfonds.backend.exception.ResourceNotFoundException;
 import com.vecfonds.backend.payload.request.dto.*;
+import com.vecfonds.backend.payload.response.ShoppingCartResponse;
 import com.vecfonds.backend.repository.CartItemRepository;
 import com.vecfonds.backend.repository.ProductRepository;
 import com.vecfonds.backend.repository.ShoppingCartRepository;
 import com.vecfonds.backend.repository.UserRepository;
 import com.vecfonds.backend.service.ShoppingCartService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Transactional
 @Component
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
@@ -26,17 +33,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
-//    private final ProductService productService;
-//
-//    @Autowired
-//    public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository, ModelMapper modelMapper, ProductRepository productRepository, CartItemRepository cartItemRepository, UserRepository userRepository, ProductService productService) {
-//        this.shoppingCartRepository = shoppingCartRepository;
-//        this.modelMapper = modelMapper;
-//        this.productRepository = productRepository;
-//        this.cartItemRepository = cartItemRepository;
-//        this.userRepository = userRepository;
-//        this.productService = productService;
-//    }
 
     @Autowired
     public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository, ModelMapper modelMapper, ProductRepository productRepository, CartItemRepository cartItemRepository, UserRepository userRepository) {
@@ -53,14 +49,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         List<CartItemDTO> cartItemDTOS = shoppingCart.getCartItems().stream()
                 .map(p -> {
-//                    ProductDTO productDTO = productService.convertProductDTO(p.getProduct());
-
-//                    CategoryDTO categoryDTO = modelMapper.map(p.getProduct().getCategory(), CategoryDTO.class);
-//                    productDTO.setCategory(categoryDTO);
-//                    DiscountDTO discountDTO = modelMapper.map(p.getProduct().getDiscount(), DiscountDTO.class);
-//                    productDTO.setDiscount(discountDTO);
-
-
                     ProductDTO productDTO = modelMapper.map(p.getProduct(), ProductDTO.class);
                     CategoryDTO categoryDTO = modelMapper.map(p.getProduct().getCategory(), CategoryDTO.class);
                     productDTO.setCategory(categoryDTO);
@@ -76,14 +64,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCartDTO addProductToCart(Long shoppingCartId, Long productId, Integer quantity, String size, String color) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(shoppingCartId)
-                .orElseThrow(()-> new ResourceNotFoundException("ShoppingCart", "shoppingCartId", shoppingCartId));
+    public ShoppingCartDTO addProductToCart(User userSession, Long productId, Integer quantity, String size, String color) {
+        User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
+        ShoppingCart shoppingCart = user.getShoppingCart();
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-        CartItem cartItem = cartItemRepository.findCartItemByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCartId, productId, size, color);
+        CartItem cartItem = cartItemRepository.findCartItemByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCart.getId(), productId, size, color);
 
         if (cartItem != null) {
             throw new ObjectExistsException("Sản phẩm " + product.getName() + " với size = " + size + ", color = " + color + " đã có trong giỏ hàng");
@@ -109,12 +97,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         cartItemRepository.save(newCartItem);
 
-//        product.setQuantity(product.getQuantity() - quantity);
-//        productRepository.save(product);
-
         shoppingCart.setTotal(shoppingCart.getTotal() + newCartItem.getItemPrice()* newCartItem.getQuantity());
-
-        shoppingCartRepository.save(shoppingCart);
 
         return convertShoppingCartDTO(shoppingCart);
     }
@@ -128,15 +111,25 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public List<ShoppingCartDTO> getListCart() {
-        List<ShoppingCart> shoppingCarts = shoppingCartRepository.findAll();
-        return shoppingCarts.stream().map(this::convertShoppingCartDTO).toList();
+    public ShoppingCartResponse getListCart(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")?Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Page<ShoppingCart> shoppingCartPage = shoppingCartRepository.findAll(pageable);
+        List<ShoppingCart> shoppingCartList = shoppingCartPage.getContent();
+        List<ShoppingCartDTO> shoppingCartDTOS = shoppingCartList.stream().map(this::convertShoppingCartDTO).toList();
+
+        ShoppingCartResponse shoppingCartResponse = modelMapper.map(shoppingCartPage, ShoppingCartResponse.class);
+        shoppingCartResponse.setContent(shoppingCartDTOS);
+
+        return shoppingCartResponse;
     }
 
     @Override
-    public ShoppingCartDTO updateProductQuantityInCart(Long shoppingCartId, Long productId, Integer quantity, String size, String color) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(shoppingCartId)
-                .orElseThrow(()-> new ResourceNotFoundException("ShoppingCart", "shoppingCartId", shoppingCartId));
+    public ShoppingCartDTO updateProductQuantityInCart(User userSession, Long productId, Integer quantity, String size, String color) {
+        User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
+        ShoppingCart shoppingCart = user.getShoppingCart();
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
@@ -150,7 +143,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                     + " với số lượng <= " + product.getQuantity() + ".");
         }
 
-        CartItem cartItem = cartItemRepository.findCartItemByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCartId, productId, size, color);
+        CartItem cartItem = cartItemRepository.findCartItemByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCart.getId(), productId, size, color);
 
         if (cartItem == null) {
             throw new APIException("Sản phẩm " + product.getName() + " với size = " + size + ", color = " + color + " không tìm thấy trong giỏ hàng");
@@ -158,7 +151,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getProduct().getPrice()*cartItem.getQuantity() + product.getPrice()*quantity);
         cartItem.setQuantity(quantity);
-        cartItemRepository.save(cartItem);
         ShoppingCart shoppingCartSaved = shoppingCartRepository.save(shoppingCart);
 
         return convertShoppingCartDTO(shoppingCartSaved);
@@ -181,7 +173,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 }
 
                 shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getItemPrice()*cartItem.getQuantity());
-                shoppingCartRepository.save(shoppingCart);
 
                 cartItemRepository.deleteByCartItemId(cartItem.getId());
             }
@@ -199,11 +190,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         shoppingCart.setTotal(shoppingCart.getTotal() - cartItem.getItemPrice()*cartItem.getQuantity());
-        shoppingCartRepository.save(shoppingCart);
 
         cartItemRepository.deleteByCartItemId(cartItem.getId());
-//         cartItemRepository.deleteByShoppingCartIdAndProductIdAndSizeAndColor(shoppingCartId, productId, size, color);
 
         return "Sản phẩm " + product.getName() + " với size = " + size + ", color = " + color + " đã xóa khỏi giỏ hàng";
+    }
+
+    @Override
+    public String deleteProductInCartUser(User userSession, Long productId, String size, String color) {
+        User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
+        ShoppingCart shoppingCart = user.getShoppingCart();
+        return deleteProductInCart(shoppingCart.getId(),productId,size,color);
     }
 }
