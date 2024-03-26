@@ -15,8 +15,8 @@ public class RefreshToken {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_refreshToken_user"))
     private User user;
 
     @Column(nullable = false, unique = true)

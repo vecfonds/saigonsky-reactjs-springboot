@@ -4,15 +4,10 @@ import com.vecfonds.backend.entity.Category;
 import com.vecfonds.backend.exception.ObjectExistsException;
 import com.vecfonds.backend.exception.ResourceNotFoundException;
 import com.vecfonds.backend.payload.request.dto.CategoryDTO;
-import com.vecfonds.backend.payload.response.CategoryResponse;
 import com.vecfonds.backend.repository.CategoryRepository;
 import com.vecfonds.backend.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,22 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getListCategory(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-
-        Page<Category> categories = categoryRepository.findAll(pageable);
-
-        List<Category> categoryList = categories.getContent();
-
-        List<CategoryDTO> categoryDTOS = categoryList.stream().map(category -> modelMapper.map(category,CategoryDTO.class)).toList();
-
-        CategoryResponse categoryResponse = modelMapper.map(categories, CategoryResponse.class);
-        categoryResponse.setContent(categoryDTOS);
-
-        return categoryResponse;
+    public List<CategoryDTO> getListCategory() {
+        List<Category> categoryList = categoryRepository.findAll();
+        return categoryList.stream().map(category -> modelMapper.map(category,CategoryDTO.class)).toList();
     }
 
     @Override

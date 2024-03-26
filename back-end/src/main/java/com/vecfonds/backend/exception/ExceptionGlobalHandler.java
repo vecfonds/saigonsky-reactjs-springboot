@@ -52,4 +52,10 @@ public class ExceptionGlobalHandler {
     public ErrorResponse handlerAPIException(APIException ex, WebRequest req){
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerIllegalStateException(IllegalStateException ex, WebRequest req){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage());
+    }
 }

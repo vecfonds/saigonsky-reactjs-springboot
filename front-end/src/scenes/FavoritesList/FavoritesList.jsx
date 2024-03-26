@@ -1,9 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import {  userSelector } from '../../store/features/userSlice';
-import { addDataFavorite, deleteDataFavorite, favoriteSelector } from '../../store/features/FavoriteSlice';
-import { productsSelector } from '../../store/features/productsSlice';
+import { deleteDataFavourite, deleteProductInFavourite, favouriteSelector, getFavourite } from '../../store/features/favouriteSlice';
 import { Rating } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -27,35 +26,29 @@ const StyledRating = styled(Rating)({
 const FavoritesList = () => {
     const dispatch = useDispatch();
     const {
-        dataFavorite
-    } = useSelector(favoriteSelector);
+        dataFavourite
+    } = useSelector(favouriteSelector);
 
     const {
-        data
-    } = useSelector(productsSelector);
-
-    const {
-        Name,
+        username,
     } = useSelector(userSelector);
 
+    useEffect(() => {
+        dispatch(getFavourite());
+    }, []);
 
     const navLinkClass = ({ isActive }) => {
         return isActive ? "list-group-item activated" : "list-group-item";
     };
 
     function handleClickFavorite(props) {
-        // console.log("e.id", props)
-        if (dataFavorite.filter(item => item === props).length) {
-            dispatch(deleteDataFavorite(props));
-        }
-        else {
-            dispatch(addDataFavorite(props));
-        }
+        dispatch(deleteProductInFavourite({ productId: props }));
+        dispatch(deleteDataFavourite(props));
     }
 
     return (
         <div id='favorites-list'>
-            <div className="headeri">Xin chào {Name}</div>
+            <div className="headeri">Xin chào {username}</div>
             <div className="personal-information">
                 <div className="personal-information-left">
                     <div className="category--list">
@@ -76,15 +69,15 @@ const FavoritesList = () => {
                     </div>
                 </div>
                 <div className="personal-information-right">
-                    <div className="product--details">
-                        {data.filter(item => dataFavorite.includes(item.Id)).map(product =>
+                    <div className="product--details">    
+                            { dataFavourite.map(product =>
                             <div className="product-card" style={{ position: "relative" }}>
                                 <StyledRating
                                     defaultValue={0}
-                                    value={dataFavorite.filter(item => item === product.Id).length}
+                                    value={true}
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        handleClickFavorite(product.Id);
+                                        handleClickFavorite(product.id);
                                     }}
                                     getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
                                     precision={1}
@@ -96,16 +89,16 @@ const FavoritesList = () => {
                                     sx={{ position: "absolute", right: "10px", top: "10px", fontSize: "large", zIndex: 1000 }}
 
                                 />
-                                <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="product-card-img">
-                                    <img src={`${product.image.filter(i => i.Main === 1)[0]?.Content}`} alt="item" />
+                                <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="product-card-img">
+                                    <img src={`${product.images.filter(i => i.main === 1)[0]?.content}`} alt="item" />
                                     <div className="product-card-body">
-                                        <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="btn">MUA NGAY</Link>
+                                        <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="btn">MUA NGAY</Link>
                                     </div>
                                 </Link>
 
                                 <div className="product-card-detail">
-                                    <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="name">{product.Name}</Link>
-                                    <p className="price">Giá: {VND.format(product.Price)}</p>
+                                    <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="name">{product.name}</Link>
+                                    <p className="price">Giá: {VND.format(product.price)}</p>
                                 </div>
                             </div>)}
                     </div >

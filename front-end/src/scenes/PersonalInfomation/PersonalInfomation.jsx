@@ -1,48 +1,31 @@
 import React, { useEffect } from 'react'
 import './PersonalInfomation.css'
-import { Link, NavLink } from 'react-router-dom'
+import {  NavLink } from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useDispatch, useSelector } from 'react-redux';
-import { editDataUser, userSelector } from '../../store/features/userSlice';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { clearState, updateUser, userSelector } from '../../store/features/userSlice';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const notify = (text) => toast.success(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-});
+import { notifySuccess } from '../../components/Toastify/Toastify';
 
 const validationSchema = z
     .object({
-        fullname: z.string().min(1, { message: "Name is required" }),
-        phonenumber: z.string().min(10, { message: "Số điện thoại phải ít nhất 10 chữ số" }),
-        address: z.string().min(1, { message: "Name is required" }),
+        username: z.string().min(1, { message: "Tên là bắt buộc" }),
+        phoneNumber: z.string().min(10, { message: "Số điện thoại gồm 10 chữ số" }),
+        address: z.string().min(1, { message: "Địa chỉ là bắt buộc" }),
     })
     ;
-
 
 const PersonalInfomation = () => {
     const dispatch = useDispatch();
 
     const {
-        Address,
-        Birthday,
-        Email,
-        Gender,
-        Id,
-        Is_active,
-        Name,
-        Phone_number,
-        Role,
+        username,
+        phoneNumber,
+        address,
+        isSuccessUpdateUser,
     } = useSelector(userSelector);
 
     const {
@@ -55,61 +38,35 @@ const PersonalInfomation = () => {
     });
 
     useEffect(() => {
-        setValue("fullname", Name);
-        setValue("phonenumber", Phone_number);
-        setValue("address", Address);
+        setValue("username", username);
+        setValue("phoneNumber", phoneNumber);
+        setValue("address", address);
+    }, [username, phoneNumber, address])
 
-    }, [])
+    useEffect(() => {
+        if(isSuccessUpdateUser){
+            dispatch(clearState());
+            notifySuccess("Cập nhật thông tin thành công!");
+        }
+    }, [isSuccessUpdateUser]);
 
 
     const onSubmit = (data) => {
-        const configData = {
-            id: Id,
-            isActive: Is_active,
-            name: data.fullname,
-            phoneNumber: data.phonenumber,
-            email: Email,
-            gender: Gender,
-            role: Role,
-            address: data.address,
-            birthday: Birthday
-        }
-        // console.log(data);
-
-
-        axios
-            .post(
-                "http://localhost/LTW_BE-dev/Controllers/EditCustomerController.php",
-                configData,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            )
-            .then((res) => {
-                // console.log("ffsdff", res.data);
-                if (res.data.isSuccess === true) {
-                    // console.log("dispatch");
-                    dispatch(editDataUser(data));
-                    notify("Cập nhật thông tin thành công!");
-                }
-            })
-            .catch((err) => {
-                // console.log("err", err)
-            });
-
+        dispatch(updateUser({
+            username: data.username,
+            phoneNumber: data.phoneNumber,
+            address: data.address
+        }));
     }
 
     const navLinkClass = ({ isActive }) => {
         return isActive ? "list-group-item activated" : "list-group-item";
     };
 
-
     return (
         <div id='personal-information'>
             <ToastContainer />
-            <div className="headeri">Xin chào {Name}</div>
+            <div className="headeri">Xin chào {username}</div>
             <div className="personal-information">
                 <div className="personal-information-left">
                     <div className="category--list">
@@ -137,16 +94,16 @@ const PersonalInfomation = () => {
                                     <input
                                         autoComplete="off"
                                         type="text"
-                                        id="fullname"
+                                        id="username"
                                         placeholder=" "
-                                        {...register("fullname")}
+                                        {...register("username")}
                                     // value={Name}
                                     />
                                     <label>Họ và tên</label>
                                 </div>
-                                {errors.fullname && (
+                                {errors.username && (
                                     <p className="textDanger">
-                                        {errors.fullname?.message}
+                                        {errors.username?.message}
                                     </p>
                                 )}
                             </div>
@@ -158,16 +115,15 @@ const PersonalInfomation = () => {
                                     <input
                                         autoComplete="off"
                                         type="number"
-                                        name="phonenumber"
+                                        name="phoneNumber"
                                         placeholder=" "
-                                        {...register("phonenumber")}
-                                    // value={Phone_number}
+                                        {...register("phoneNumber")}
                                     />
                                     <label>Số điện thoại</label>
                                 </div>
-                                {errors.phonenumber && (
+                                {errors.phoneNumber && (
                                     <p className="textDanger">
-                                        {errors.phonenumber?.message}
+                                        {errors.phoneNumber?.message}
                                     </p>
                                 )}
                             </div>
@@ -181,7 +137,6 @@ const PersonalInfomation = () => {
                                         name="address"
                                         placeholder=" "
                                         {...register("address")}
-                                    // value={Address}
                                     />
                                     <label>Địa chỉ</label>
                                 </div>

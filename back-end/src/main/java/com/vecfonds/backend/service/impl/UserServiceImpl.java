@@ -3,7 +3,9 @@ package com.vecfonds.backend.service.impl;
 import com.vecfonds.backend.entity.Role;
 import com.vecfonds.backend.entity.ShoppingCart;
 import com.vecfonds.backend.entity.User;
+import com.vecfonds.backend.exception.IllegalStateException;
 import com.vecfonds.backend.exception.ObjectExistsException;
+import com.vecfonds.backend.payload.request.ChangePasswordRequest;
 import com.vecfonds.backend.payload.request.RegisterRequest;
 import com.vecfonds.backend.payload.request.dto.ShoppingCartDTO;
 import com.vecfonds.backend.payload.request.dto.UserDTO;
@@ -135,5 +137,22 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
 
         return "Tài khoản với số điện thoại " + phoneNumber + " đã xóa thành công!";
+    }
+
+    @Override
+    public String changePassword(User userSession, ChangePasswordRequest changePasswordRequest) {
+        User user = userRepository.findByPhoneNumber(userSession.getPhoneNumber()).get();
+
+        if(!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())){
+            throw new IllegalStateException("Mật khẩu không chính xác!");
+        }
+
+        if(!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmationPassword())){
+            throw new IllegalStateException("Mật khẩu mới không khớp!");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
+        return "Thay đổi mật khẩu thành công!";
     }
 }

@@ -210,6 +210,10 @@
     flex: 6.5;
 }
 
+.not-allowed{
+    cursor: not-allowed;
+}
+
 @media screen and (max-width: 1300px) {
     #payment {
         margin: 0rem 3rem;

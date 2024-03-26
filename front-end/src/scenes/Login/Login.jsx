@@ -1,17 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useDispatch } from "react-redux";
-import axios from 'axios';
-import { loadDataUser, } from '../../store/features/userSlice';
+import { useDispatch, useSelector } from "react-redux";
 import '../Signup/Signup.css'
+import { ToastContainer } from 'react-toastify';
+import { authenticationSelector, clearState, loginUser } from '../../store/features/authenticationSlice';
+import { getUser } from '../../store/features/userSlice';
 
 const validationSchema = z
   .object({
-    phonenumber: z.string().min(10, { message: "Số điện thoại phải ít nhất 10 chữ số" }),
+    phoneNumber: z.string().min(10, { message: "Số điện thoại gồm 10 chữ số" }),
 
     password: z
       .string()
@@ -19,10 +20,9 @@ const validationSchema = z
   })
   ;
 
-
 function Login() {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [hiddenPwd, setHiddenPwd] = useState(false);
 
   const {
@@ -33,44 +33,40 @@ function Login() {
     resolver: zodResolver(validationSchema),
   });
 
-  const [message, setMessage] = useState("");
+  const { isSuccess, isError, message } = useSelector(
+    authenticationSelector
+  );
 
-  // const onSubmit = (data) => {
-  //   axios
-  //     .post(
-  //       "http://localhost/LTW_BE-dev/Controllers/LoginController.php",
-  //       {
-  //         phoneNumber: data.phonenumber,
-  //         password: data.password,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     )
-  //     .then((res) => {
-  //       console.log("ffsdff", res.data);
-  //       setMessage(res.data.message);
-  //       if (res.data.isSuccess === true) {
-  //         dispatch(loadDataUser(res.data));
-  //         navigate("/sanpham");
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // console.log("err", err)
-  //     });
-  // };
+  useEffect(() => {
+    dispatch(clearState());
+}, [dispatch]);
+
+useEffect(() => {
+    if (isSuccess) {
+      dispatch(clearState());
+      dispatch(getUser());
+      navigate("/sanpham");
+    }
+    if (isError) {
+        setTimeout(() => dispatch(clearState()), 5000);
+    }
+}, [isSuccess, isError, navigate, dispatch]);
+
+  const onSubmit = (data) => {
+    const { phoneNumber, password } = data;
+    dispatch(loginUser({ phoneNumber, password }));
+  };
 
   return (
     <div className="login-container">
       <div className="backgr">
+      <ToastContainer />
         <div className="container">
           <div className="container_left active-left">
             <div className="image1"></div>
           </div>
           <div className="container_right">
-            <form className="form" onSubmit={handleSubmit()}>
+            <form className="form" onSubmit={handleSubmit(onSubmit)}>
               <div className="form-inner">
                 <div className="welcome">
                   <h1 className="text">Đăng nhập</h1>
@@ -81,15 +77,15 @@ function Login() {
                     <input
                       // autoComplete="off"
                       type="number"
-                      name="phonenumber"
+                      name="phoneNumber"
                       placeholder=" "
-                      {...register("phonenumber")}
+                      {...register("phoneNumber")}
                     />
                     <label>Số điện thoại</label>
                   </div>
-                  {errors.phonenumber && (
+                  {errors.phoneNumber && (
                     <p className="textDanger">
-                      {errors.phonenumber?.message}
+                      {errors.phoneNumber?.message}
                     </p>
                   )}
                 </div>

@@ -1,6 +1,7 @@
 package com.vecfonds.backend.service;
 
 import com.vecfonds.backend.entity.User;
+import com.vecfonds.backend.payload.request.ChangePasswordRequest;
 import com.vecfonds.backend.payload.request.RegisterRequest;
 import com.vecfonds.backend.payload.request.dto.UserDTO;
 import com.vecfonds.backend.payload.response.UserResponse;
@@ -19,4 +20,6 @@ public interface UserService {
     UserDTO updateUser(String phoneNumber, UserDTO request);
 
     String deleteUser(String phoneNumber);
+
+    String changePassword(User userSession, ChangePasswordRequest changePasswordRequest);
 }

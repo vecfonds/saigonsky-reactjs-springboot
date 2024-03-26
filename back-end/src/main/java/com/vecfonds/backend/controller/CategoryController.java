@@ -2,7 +2,6 @@ package com.vecfonds.backend.controller;
 
 import com.vecfonds.backend.entity.Category;
 import com.vecfonds.backend.payload.request.dto.CategoryDTO;
-import com.vecfonds.backend.payload.response.CategoryResponse;
 import com.vecfonds.backend.payload.response.MessageResponse;
 import com.vecfonds.backend.service.CategoryService;
 import jakarta.validation.Valid;
@@ -11,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/category")
@@ -30,14 +31,9 @@ public class CategoryController {
     }
 
     @GetMapping("list")
-    public ResponseEntity<?> getListCategory(
-            @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "2", required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder
-    ){
-        CategoryResponse categoryResponse = categoryService.getListCategory(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(categoryResponse, HttpStatus.FOUND);
+    public ResponseEntity<?> getListCategory(){
+        List<CategoryDTO> categoryResponse = categoryService.getListCategory();
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @Secured("ADMIN")

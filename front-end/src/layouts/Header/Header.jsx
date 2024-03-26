@@ -16,7 +16,7 @@ import {
 import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import { useDispatch, useSelector } from "react-redux";
-import { userSelector } from "../../store/features/userSlice";
+import { getUser, userSelector } from "../../store/features/userSlice";
 import { clearData } from "../../store/features/userSlice";
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -28,10 +28,15 @@ import HistoryIcon from '@mui/icons-material/History';
 import StoreIcon from '@mui/icons-material/Store';
 import LoginIcon from '@mui/icons-material/Login';
 import SensorOccupiedIcon from '@mui/icons-material/SensorOccupied';
+import { logout } from "../../store/features/authenticationSlice";
 
 function Header() {
     const { pathname } = useLocation();
     const dispatch = useDispatch();
+
+    useEffect(() => {
+      dispatch(getUser());
+    }, []);
 
     const [checked, setChecked] = useState(false);
 
@@ -44,7 +49,7 @@ function Header() {
     };
 
     const {
-        Name,
+        username,
     } = useSelector(userSelector);
 
     useEffect(() => {
@@ -149,7 +154,7 @@ function Header() {
                     <ListItemText primary="GIỎ HÀNG" />
                 </ListItemButton>
                 {
-                    Name && <>
+                    username && <>
                         <ListItemButton onClick={handleChecked}
                             component={RouterLink} to='/taikhoan'
                         >
@@ -190,6 +195,7 @@ function Header() {
                         <ListItemButton onClick={() => {
                             handleChecked();
                             dispatch(clearData());
+                            dispatch(logout());
                         }}
                             component={RouterLink} to='/dangnhap'
                         >
@@ -255,15 +261,18 @@ function Header() {
 
             <div className="login">
                 <div className="btn-log"><Link to='/giohang'><LocalMallOutlinedIcon />Giỏ hàng</Link></div>
-                <div className="btn-log btn-taikhoan"><Link><AccountCircleSharpIcon />{Name.split(" ").reverse().slice(0, 2).reverse().join(" ") || Name || "Tài khoản"}
+                <div className="btn-log btn-taikhoan"><Link><AccountCircleSharpIcon />{username.split(" ").reverse().slice(0, 2).reverse().join(" ") || username || "Tài khoản"}
                     <ul className='taikhoan'>
                         {
-                            Name && <>
+                            username && <>
                                 <li><Link to='/taikhoan'>Thông tin tài khoản</Link></li>
                                 <li><Link to='/lichsudonhang'>Lịch sử đơn hàng</Link></li>
                                 <li><Link to='/danhsachyeuthich'>Danh sách yêu thích</Link></li>
                                 <li><Link to='/thaydoimatkhau'>Thay Đổi Mật Khẩu</Link></li>
-                                <li><Link to='/dangnhap' onClick={() => dispatch(clearData())}>Đăng xuất</Link></li>
+                                <li><Link to='/dangnhap' onClick={() => {
+                                    dispatch(logout());
+                                    dispatch(clearData());
+                                    }}>Đăng xuất</Link></li>
                             </> ||
                             <><li><Link to='/dangnhap'>Đăng nhập</Link></li>
                                 <li><Link to='/dangky'>Đăng ký</Link></li>

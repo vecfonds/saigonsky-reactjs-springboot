@@ -23,8 +23,6 @@ export function Slideshow({ children, className, style }) {
     return () => clearTimeout(timer.current);
   });
 
-  // console.log(context.items);
-
   return (
     <SlideshowContext.Provider value={[context, setContext]}>
       <div className="slideshow">{children}</div>

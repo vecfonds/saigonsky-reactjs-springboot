@@ -1,59 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Signup.css'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const notifySuccess = (text) => toast.success(text, {
-    position: "bottom-left",
-    autoClose: 2000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-    style: {
-        fontSize: "16px"
-    }
-});
-
-const notifyWarning = (text) => toast.warning(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-    style: {
-        fontSize: "16px"
-    }
-});
+import { useDispatch, useSelector } from 'react-redux';
+import { authenticationSelector, clearState, signupUser } from '../../store/features/authenticationSlice';
 
 const validationSchema = z
     .object({
-        fullname: z.string().min(1, { message: "Name is required" }),
-        phonenumber: z.string().min(1, { message: "Phone number is required" }),
-        address: z.string().min(1, { message: "Address is required" }),
+        username: z.string().min(1, { message: "Tên là bắt buộc" }),
+        phoneNumber: z.string().min(1, { message: "Số điện thoại là bắt buộc" }),
+        address: z.string().min(1, { message: "Địa chỉ là bắt buộc" }),
         password: z
             .string()
-            .min(6, { message: "Password must be atleast 6 characters" }),
+            .min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }),
         confirmPassword: z
             .string()
-            .min(1, { message: "Confirm Password is required" }),
+            .min(1, { message: "Xác nhận mật khẩu là bắt buộc" }),
         terms: z.literal(true, {
-            errorMap: () => ({ message: "You must accept Terms and Conditions" }),
+            errorMap: () => ({ message: "Bạn phải chấp nhận Điều khoản và Điều kiện" }),
         }),
     }).refine((data) => data.password === data.confirmPassword, {
         path: ["confirmPassword"],
-        message: "Password don't match",
+        message: "Mật khẩu không khớp",
     });
 
 const Signup = () => {
@@ -70,43 +43,31 @@ const Signup = () => {
         resolver: zodResolver(validationSchema),
     });
 
-    // const [message, setMessage] = useState("");
+    const { isSuccess, isError, message } = useSelector(
+        authenticationSelector
+    );
 
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(clearState());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            setTimeout(() => {
+                dispatch(clearState());
+                navigate("/dangnhap");
+            }, 2000);
+        }
+        if (isError) {
+            setTimeout(() => dispatch(clearState()), 5000);
+        }
+    }, [isSuccess, isError, navigate, dispatch]);
 
     const onSubmit = (data) => {
-        // console.log(data)
-
-        axios
-            .post(
-                "http://localhost/LTW_BE-dev/Controllers/SignUpController.php",
-                {
-                    name: data.fullname,
-                    phoneNumber: data.phonenumber,
-                    address: data.address,
-                    password: data.password
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            )
-            .then((res) => {
-                // console.log("ffsdff", res.data);
-                // setMessage(res.data.message);
-                if (res.data.isSuccess === true) {
-                    notifySuccess(res.data.message);
-                    setTimeout(() => { navigate("/dangnhap"); }, 2000)
-                }
-                else {
-                    notifyWarning(res.data.message);
-                }
-            })
-            .catch((err) => {
-                // console.log("err", err);
-            });
-
-
+        const { username, address, phoneNumber, password } = data;
+        dispatch(signupUser({ username, address, phoneNumber, password }));
     }
     return (
         <div className="login-container">
@@ -132,15 +93,15 @@ const Signup = () => {
                                         <input
                                             autoComplete="off"
                                             type="text"
-                                            id="fullname"
+                                            id="username"
                                             placeholder=" "
-                                            {...register("fullname")}
+                                            {...register("username")}
                                         />
                                         <label>Họ và tên</label>
                                     </div>
-                                    {errors.fullname && (
+                                    {errors.username && (
                                         <p className="textDanger">
-                                            {errors.fullname?.message}
+                                            {errors.username?.message}
                                         </p>
                                     )}
                                 </div>
@@ -150,15 +111,15 @@ const Signup = () => {
                                         <input
                                             // autoComplete="off"
                                             type="number"
-                                            name="phonenumber"
+                                            name="phoneNumber"
                                             placeholder=" "
-                                            {...register("phonenumber")}
+                                            {...register("phoneNumber")}
                                         />
                                         <label>Số điện thoại</label>
                                     </div>
-                                    {errors.phonenumber && (
+                                    {errors.phoneNumber && (
                                         <p className="textDanger">
-                                            {errors.phonenumber?.message}
+                                            {errors.phoneNumber?.message}
                                         </p>
                                     )}
                                 </div>
@@ -248,6 +209,11 @@ const Signup = () => {
 
                                 </div>
 
+                                {message &&
+                                    <p className="textDanger" style={{ textAlign: "center" }}>
+                                        {message}
+                                    </p>}
+
                             </div>
 
 
@@ -264,9 +230,6 @@ const Signup = () => {
             </div>
         </div>
     )
-
 }
-
-
 
 export default Signup;

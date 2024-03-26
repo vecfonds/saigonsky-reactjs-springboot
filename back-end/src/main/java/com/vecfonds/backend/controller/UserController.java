@@ -1,6 +1,7 @@
 package com.vecfonds.backend.controller;
 
 import com.vecfonds.backend.entity.User;
+import com.vecfonds.backend.payload.request.ChangePasswordRequest;
 import com.vecfonds.backend.payload.request.dto.UserDTO;
 import com.vecfonds.backend.payload.response.MessageResponse;
 import com.vecfonds.backend.payload.response.UserResponse;
@@ -30,7 +31,7 @@ public class UserController {
 //        User user = (User) authentication.getPrincipal();
 
         UserDTO userDTO = userService.getUser(userSession);
-        return new ResponseEntity<>(userDTO, HttpStatus.FOUND);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @PutMapping("user")
@@ -55,13 +56,19 @@ public class UserController {
             @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder
     ){
         UserResponse userResponse = userService.getListUser(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(userResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     @Secured("ADMIN")
     @GetMapping("admin/users/{phoneNumber}")
     public ResponseEntity<?> getUserByPhoneNumber(@PathVariable String phoneNumber){
         UserDTO userDTO = userService.getUserByPhoneNumber(phoneNumber);
-        return new ResponseEntity<>(userDTO, HttpStatus.FOUND);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("user/change-password")
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal User userSession, @RequestBody ChangePasswordRequest changePasswordRequest){
+        String message = userService.changePassword(userSession, changePasswordRequest);
+        return new ResponseEntity<>(new MessageResponse(message),HttpStatus.OK);
     }
 }

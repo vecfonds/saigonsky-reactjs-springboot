@@ -2,6 +2,7 @@ package com.vecfonds.backend.controller;
 
 import com.vecfonds.backend.entity.User;
 import com.vecfonds.backend.payload.request.dto.ShoppingCartDTO;
+import com.vecfonds.backend.payload.response.MessageResponse;
 import com.vecfonds.backend.payload.response.ShoppingCartResponse;
 import com.vecfonds.backend.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,6 @@ public class ShoppingCartController {
             , @PathVariable Long productId
             , @PathVariable String size, @PathVariable String color){
         String response = shoppingCartService.deleteProductInCartUser(userSession, productId, size, color);
-        return new ResponseEntity<>( response, HttpStatus.OK);
+        return new ResponseEntity<>( new MessageResponse(response), HttpStatus.OK);
     }
 }

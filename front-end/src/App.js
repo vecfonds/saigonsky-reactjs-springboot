@@ -9,13 +9,13 @@ import Footer from "./layouts/Footer/Footer";
 import Home from "./scenes/Home/index";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import Intro from "./scenes/Intro/index";
-import { useLayoutEffect } from "react";
+import { lazy, useEffect, useLayoutEffect } from "react";
 import SubNews from "./scenes/SubNews/SubNews";
 import Products from "./scenes/Products/Products";
 import Signup from "./scenes/Signup/Signup";
 import Login from "./scenes/Login/Login";
 import Contact from "./scenes/Contact/Contact";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./store/store";
 import ProductDetail from "./scenes/ProductDetail/ProductDetail";
 import ShoppingCart from "./scenes/ShoppingCart/ShoppingCart";
@@ -24,6 +24,7 @@ import PersonalInfomation from "./scenes/PersonalInfomation/PersonalInfomation";
 import ChangePassword from "./scenes/ChangePassword/ChangePassword";
 import OrderHistory from "./scenes/OrderHistory/OrderHistory";
 import FavoritesList from "./scenes/FavoritesList/FavoritesList";
+import { getUser } from "./store/features/userSlice";
 
 const Wrapper = ({ children }) => {
   const location = useLocation();

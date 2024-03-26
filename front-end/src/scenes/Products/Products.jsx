@@ -6,13 +6,13 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import { Rating } from '@mui/material';
-import axios from 'axios';
+import { Pagination, Rating } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadDataProducts, productsSelector } from '../../store/features/productsSlice';
+import { getListProduct, getListProductByCategory, getListProductByKeyword, productsSelector } from '../../store/features/productsSlice';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { favoriteSelector } from '../../store/features/FavoriteSlice';
+import { favouriteSelector, getFavourite } from '../../store/features/favouriteSlice';
+import { categorySelector, getListCategory } from '../../store/features/categorySlice';
 
 
 const VND = new Intl.NumberFormat('vi-VN', {
@@ -34,8 +34,8 @@ const Products = () => {
     const dispatch = useDispatch();
 
     const {
-        dataFavorite
-    } = useSelector(favoriteSelector);
+        dataFavourite
+    } = useSelector(favouriteSelector);
 
 
     const offscreen = { y: "1.5rem", opacity: 0 };
@@ -49,141 +49,77 @@ const Products = () => {
         }
     }
 
-
-    useEffect(() => {
-        axios
-            .get(
-                "http://localhost/LTW_BE-dev/Controllers/ShowProduct.php",
-
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            )
-            .then((res) => {
-                // console.log("ffsdff", res.data);
-                if (res.data.isSuccess === true) {
-
-                    console.log("res.data.", res.data.data);
-                    localStorage.clear();
-                    dispatch(loadDataProducts(res.data.data));
-
-                }
-            })
-            .catch((err) => {
-                // console.log("err", err);
-            });
-
-    }, [])
-
-
     const {
-        data
+        totalElements,
+        totalPages,
+        data,
+        message
     } = useSelector(productsSelector);
 
-    // console.log("data", data)
+    const {
+        dataCategory
+    } = useSelector(categorySelector);
 
-    const [q, setQ] = useState("");
-    const [searchParam] = useState(["Name", "Type"]);
-    const [filterParam, setFilterParam] = useState("Tất cả");
-    const [sortParam, setSortParam] = useState("Tùy chọn");
+    const [pageNumber, setpageNumber] = useState(0);
+    const [pageSize, setPageSize] = useState(8);
+    const [sortBy, setSortBy] = useState("createAt");
+    const [sortOrder, setSortOrder] = useState("des");
 
-    const dataFilter = Object.values(data);
+    useEffect(() => {
+        dispatch(getListProduct({ pageNumber, pageSize, sortBy, sortOrder }));
+        dispatch(getFavourite());
+        dispatch(getListCategory());
+    }, []);
 
-    function search(items) {
-        if (sortParam !== "Tùy chọn") {
-            function sortByIdThenName(a, b) {
-                if (sortParam === "Giá tăng dần") {
-                    const n = a.Price - b.Price;
-                    // sort by listId
-                    if (n !== 0) {
-                        return n;
-                    }
-                }
-                else {
-                    const n = b.Price - a.Price;
-                    // sort by listId
-                    if (n !== 0) {
-                        return n;
-                    }
-                }
-                // if listId is equal then sort by name
-                return a.Name.localeCompare(b.Name);
-            }
+    const [searchParam, setSearchParam] = useState("");
+    const [categoryParam, setCategoryParam] = useState(0);
 
-            return items.sort(sortByIdThenName).filter((item) => {
-                if (item.Name === filterParam) {
-                    return searchParam.some((newItem) => {
-                        return (
-                            item[newItem]
-                                .toString()
-                                .toLowerCase()
-                                .indexOf(q.toLowerCase()) > -1
-                        );
-                    });
-                }
-                else if (item.Type === filterParam) {
-                    return searchParam.some((newItem) => {
-                        return (
-                            item[newItem]
-                                .toString()
-                                .toLowerCase()
-                                .indexOf(q.toLowerCase()) > -1
-                        );
-                    });
-                }
-                else if (filterParam === "Tất cả") {
-                    return searchParam.some((newItem) => {
-                        return (
-                            item[newItem]
-                                .toString()
-                                .toLowerCase()
-                                .indexOf(q.toLowerCase()) > -1
-                        );
-                    });
-                }
-            });
+    const handleSearch = (e) => {
+        setSearchParam(e.target.value);
+        setpageNumber(0);
+        if (categoryParam !== 0) {
+            setCategoryParam(0);
         }
-
-        return items.filter((item) => {
-            if (item.Name === filterParam) {
-                return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
-                });
-            }
-            else if (item.Type === filterParam) {
-                return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
-                });
-            }
-            else if (filterParam === "Tất cả") {
-                return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
-                });
-            }
-        });
+        if (e.target.value.trim() === "") {
+            dispatch(getListProduct({ pageNumber: 0, pageSize, sortBy, sortOrder }));
+        }
+        else {
+            dispatch(getListProductByKeyword({ pageNumber: 0, pageSize, sortBy, sortOrder, keyword: e.target.value }));
+        }
     }
 
+    const handleFilterByCategory = (e) => {
+        setCategoryParam(e.target.value);
+        setSearchParam("");
+        setpageNumber(0);
+        if (e.target.value) {
+            dispatch(getListProductByCategory({ pageNumber: 0, pageSize, sortBy, sortOrder, categoryId: e.target.value }));
+        }
+        else{
+            dispatch(getListProduct({ pageNumber: 0, pageSize, sortBy, sortOrder }));
+        }
+    }
 
+    const handleSortByAndOrder = (e) => {
+        setCategoryParam(0);
+        setSortOrder(e.target.value.split(",")[0]);
+        setSortBy(e.target.value.split(",")[1]);
+        setpageNumber(0);
+        dispatch(getListProduct({ pageNumber: 0, pageSize, sortBy: e.target.value.split(",")[1], sortOrder: e.target.value.split(",")[0] }));
+    }
 
-
-
+    const handleChangePageNumber = (event, value) => {
+        setpageNumber(value - 1);
+        if (searchParam) {
+            dispatch(getListProductByKeyword({ pageNumber: value - 1, pageSize, sortBy, sortOrder, keyword: searchParam }));
+        }
+        else if (categoryParam) {
+            dispatch(getListProductByCategory({ pageNumber: value - 1, pageSize, sortBy, sortOrder, categoryId: categoryParam }));
+        }
+        else {
+            dispatch(getListProduct({ pageNumber: value - 1, pageSize, sortBy, sortOrder }));
+        }
+    };
 
     return (
         <div id="products">
@@ -212,7 +148,7 @@ const Products = () => {
                 viewport={{ once: true }}
 
             >
-                <div className='sub-tilte'>({search(dataFilter).length} sản phẩm)</div>
+                <div className='sub-tilte'>({totalElements} sản phẩm)</div>
             </motion.div>
 
             <div className="filter_products">
@@ -224,8 +160,8 @@ const Products = () => {
                             type="text"
                             id="filter"
                             placeholder="Tìm kiếm"
-                            value={q}
-                            onChange={(e) => setQ(e.target.value)}
+                            value={searchParam}
+                            onChange={handleSearch}
                         />
 
                     </div>
@@ -239,25 +175,30 @@ const Products = () => {
                         >
                             <Select
                                 sx={{ height: 40, padding: 0, margin: 0 }}
-                                value={filterParam}
-                                onChange={(e) => {
-                                    setFilterParam(e.target.value);
-                                }}
+                                value={categoryParam}
+                                onChange={handleFilterByCategory}
+                                // onChange={(e) => {
+                                //     setCategoryParam(e.target.value);
+                                //     // dispatch(getListProductByCategory({ categoryId: e.target.value }));
+                                // }}
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                             >
-                                <MenuItem value={"Tất cả"}>
+                                <MenuItem value={0}>
                                     <em>Tất cả</em>
                                 </MenuItem>
-                                <MenuItem value={"Áo sơ mi"}>Áo sơ mi</MenuItem>
-                                <MenuItem value={"Jumpsuit"}>Jumpsuit</MenuItem>
-                                <MenuItem value={"Đầm"}>Đầm</MenuItem>
+                                {
+                                    dataCategory.map(item => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)
+                                }
+                                {/* <MenuItem value={1}>Quần</MenuItem>
+                                <MenuItem value={2}>Áo</MenuItem> */}
+                                {/* <MenuItem value={"Đầm"}>Đầm</MenuItem>
                                 <MenuItem value={"Quần Dài"}>Quần Dài</MenuItem>
                                 <MenuItem value={"Chân váy"}>Chân váy</MenuItem>
                                 <MenuItem value={"Quần Short"}>Quần Short</MenuItem>
                                 <MenuItem value={"Set bộ"}>Set bộ</MenuItem>
                                 <MenuItem value={"Áo Dài"}>Áo Dài</MenuItem>
-                                <MenuItem value={"Quần Jeans"}>Quần Jeans</MenuItem>
+                                <MenuItem value={"Quần Jeans"}>Quần Jeans</MenuItem> */}
                             </Select>
                         </FormControl>
                     </div>
@@ -269,18 +210,16 @@ const Products = () => {
                         >
                             <Select
                                 sx={{ height: 40 }}
-                                value={sortParam}
-                                onChange={(e) => {
-                                    setSortParam(e.target.value);
-                                }}
+                                value={`${[sortOrder, sortBy]}`}
+                                onChange={handleSortByAndOrder}
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
                             >
-                                <MenuItem value={"Tùy chọn"}>
-                                    <em>Tùy chọn</em>
-                                </MenuItem>
-                                <MenuItem value={"Giá tăng dần"}>Giá tăng dần</MenuItem>
-                                <MenuItem value={"Giá giảm dần"}>Giá giảm dần</MenuItem>
+                                <MenuItem value={`${["asc", "price"]}`}>Giá tăng dần</MenuItem>
+                                <MenuItem value={`${["des", "price"]}`}>Giá giảm dần</MenuItem>
+                                <MenuItem value={`${["des", "createAt"]}`}>Mới nhất</MenuItem>
+                                <MenuItem value={`${["asc", "createAt"]}`}>Cũ nhất</MenuItem>
+
                             </Select>
                         </FormControl>
                     </div>
@@ -290,37 +229,53 @@ const Products = () => {
 
 
             <div className="product--details">
-                {search(dataFilter).map(product =>
-                    <div className="product-card" key={product.Id}>
-                        <Link to={`${product.Id}`} state={{ id: product.Id }} className="product-card-img">
+                {
+                    data.map(product =>
+                        <div className="product-card" key={product.id}
+                        // onClick={()=>dispatch(getListProductSimilar({ pageNumber: 0, pageSize, sortBy, sortOrder, categoryId: product.category.id }))}
+                        >
+                            <Link to={`${product.id}`} state={{ id: product.id }} className="product-card-img">
 
-                            <img src={`${product.image.filter(i => i.Main === 1)[0]?.Content}`} alt={product.Name} />
+                                <img src={`${product.images.filter(i => i.main === 1)[0]?.content}`} alt={product.name} />
 
-                            <StyledRating
-                                // name="customized-color"
-                                defaultValue={0}
-                                value={dataFavorite.filter(item => item === product.Id).length}
-                                readOnly
-                                getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
-                                precision={1}
-                                icon={<FavoriteIcon fontSize="inherit" />}
-                                emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                                sx={{ position: "absolute", right: "10px", top: "10px", fontSize: "large" }}
-                                max={1}
-                                size="inherit"
-                                name="size-large"
-                            />
-                            <div className="product-card-body">
-                                <Link to={`${product.Id}`} state={{ id: product.Id }} className="btn">MUA NGAY</Link>
+                                <StyledRating
+                                    // name="customized-color"
+                                    defaultValue={0}
+                                    value={dataFavourite.filter(item => item?.id === product.id).length}
+                                    readOnly
+                                    getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                                    precision={1}
+                                    icon={<FavoriteIcon fontSize="inherit" />}
+                                    emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                                    sx={{ position: "absolute", right: "10px", top: "10px", fontSize: "large" }}
+                                    max={1}
+                                    size="inherit"
+                                    name="size-large"
+                                />
+                                <div className="product-card-body">
+                                    <Link to={`${product.id}`} state={{ id: product.id }} className="btn">MUA NGAY</Link>
+                                </div>
+                            </Link>
+
+                            <div className="product-card-detail">
+                                <Link to={`${product.id}`} state={{ id: product.id }} className="name">{product.name}</Link>
+                                <p className="price">Giá: {VND.format(product?.price)}</p>
                             </div>
-                        </Link>
-
-                        <div className="product-card-detail">
-                            <Link to={`${product.Id}`} state={{ id: product.Id }} className="name">{product.Name}</Link>
-                            <p className="price">Giá: {VND.format(product?.Price)}</p>
-                        </div>
-                    </div>)}
+                        </div>)
+                }
             </div >
+
+            {
+                message ?
+                    <div className="message-warning">
+                        <img src="/assets/images/meo.png" alt="meo" />
+                        {/* <img src="https://khanhkhiem.com/wp-content/uploads/2022/10/meme-meo-bua-8.jpg" alt="meo" /> */}
+                        <div>{message}</div>
+                    </div>
+                    : <div className="pagination">
+                        <Pagination count={totalPages} page={pageNumber + 1} onChange={handleChangePageNumber} />
+                    </div>
+            }
         </div>
 
     )

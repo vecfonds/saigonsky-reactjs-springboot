@@ -33,6 +33,12 @@ public class ProductController {
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
 
+    @GetMapping("{productId}")
+    public ResponseEntity<?> getProduct(@PathVariable Long productId){
+        ProductDTO productDTO = productService.getProduct(productId);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
+
     @GetMapping("list")
     public ResponseEntity<?> getListProduct(
             @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
@@ -41,7 +47,7 @@ public class ProductController {
             @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder
     ){
         ProductResponse productResponse = productService.getListProduct(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @GetMapping("/list/category/{categoryId}")
@@ -53,7 +59,7 @@ public class ProductController {
             @PathVariable Long categoryId
     ){
         ProductResponse productResponse = productService.getListProductByCategory(pageNumber, pageSize, sortBy, sortOrder, categoryId);
-        return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @GetMapping("/list/keyword/{keyword}")
@@ -65,7 +71,7 @@ public class ProductController {
             @PathVariable String keyword
     ){
         ProductResponse productResponse = productService.getListProductByKeyword(pageNumber, pageSize, sortBy, sortOrder, keyword);
-        return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
 //    @Secured("ADMIN")

@@ -20,4 +20,5 @@ public interface ProductService {
     String deleteProduct(Long productId);
     ProductDTO createProductImageLink(Long productId,Image image);
     ProductDTO createProductImageMultipartFile(Long productId, MultipartFile image, Integer main) throws IOException;
+    ProductDTO getProduct(Long productId);
 }

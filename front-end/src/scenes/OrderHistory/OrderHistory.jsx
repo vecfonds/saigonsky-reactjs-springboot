@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import './OrderHistory.css'
 import { NavLink } from 'react-router-dom'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userSelector } from '../../store/features/userSlice';
-import axios from 'axios';
+import { billSelector, getListBillUser } from '../../store/features/billSlice';
+import { Pagination } from '@mui/material';
 
 const VND = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -11,53 +12,35 @@ const VND = new Intl.NumberFormat('vi-VN', {
 });
 
 const OrderHistory = () => {
+    const dispatch = useDispatch();
+
     const {
-        Id,
-        Name,
+        username,
     } = useSelector(userSelector);
+
+    const {
+        billData,
+        totalPages,
+    } = useSelector(billSelector);
+
+    const [pageNumber, setpageNumber] = useState(0);
+
+    useEffect(() => {
+        dispatch(getListBillUser({ pageNumber }));
+    }, [])
 
     const navLinkClass = ({ isActive }) => {
         return isActive ? "list-group-item activated" : "list-group-item";
     };
 
-    const [dataOrderHistory, setDataOrderHistory] = useState();
-
-    useEffect(() => {
-        async function fetchData() {
-            await axios
-                .post(
-                    "http://localhost/LTW_BE-dev/Controllers/GetBill.php",
-                    {
-                        customerID: Id
-                    },
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }
-                )
-                .then((res) => {
-                    // console.log("GetBill.php", res.data);
-                    if (res.data.isSuccess === true) {
-                        setDataOrderHistory(res.data.data);
-                        // console.log("res.data.", res.data.data);
-                    }
-                })
-                .catch((err) => {
-                    // console.log("err", err);
-                });
-        }
-
-        fetchData();
-
-
-    }, [Id])
-
-    // console.log("dataOrderHistory", dataOrderHistory)
+    const handleChangePageNumber = (event, value) => {
+        setpageNumber(value - 1);
+        dispatch(getListBillUser({ pageNumber: value - 1 }));
+    };
 
     return (
         <div id='order-history'>
-            <div className="headeri">Xin chào {Name}</div>
+            <div className="headeri">Xin chào {username}</div>
             <div className="personal-information">
                 <div className="personal-information-left">
                     <div className="category--list">
@@ -79,31 +62,30 @@ const OrderHistory = () => {
                 </div>
                 <div className="personal-information-right">
 
-                    {dataOrderHistory?.map(bill =>
+                    {billData?.map(bill =>
                         <div className="bill">
                             <div className='mobile-shoppingcart'>
                                 <div className='mobile-shoppingcart-center'>
-                                    {bill.details?.map((product) => (
+                                    {bill.billDetails?.map((billDetail) => (
                                         <div className='product-cart-shopping'>
                                             <div className="product-cart-shopping-img">
-                                                <img src={`${product.Image}`} alt="" />
-
+                                                <img src={`${billDetail.product.images.filter(i => i.main === 1)[0]?.content}`} alt={`${billDetail.product.name}`} />
                                             </div>
                                             <div className="product-cart-shopping-detail">
-                                                <h2 className="title">{product.Name}</h2>
+                                                <h2 className="title">{billDetail.product.name}</h2>
                                                 <div className='subtitle'>
-                                                    <p className="brand-name"><strong>Thương hiệu:</strong> {product.Album}</p>
-                                                    <p><strong>Phiên bản:</strong> {product.Size} / {product.Color}</p>
+                                                    <p className="brand-name"><strong>Thương hiệu:</strong> {billDetail.product.album}</p>
+                                                    <p><strong>Phiên bản:</strong> {billDetail.size} / {billDetail.color}</p>
                                                 </div>
 
                                                 <div className="quantity-cart">
                                                     <div className="quantity-input">
-                                                        <input className="quantity-input" type="text" value={product.Count} readOnly />
+                                                        <input className="quantity-input" type="text" value={billDetail.quantity} readOnly />
                                                     </div>
 
                                                 </div>
                                                 <div className='footer-card'>
-                                                    <p className="price">{VND.format(product.Price_item)}</p>
+                                                    <p className="price">{VND.format(billDetail.product.price)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -112,25 +94,23 @@ const OrderHistory = () => {
                             </div>
 
                             <div className="bill-day">
-                                <strong>Ngày đặt hàng:</strong> {bill.Time}
+                                <strong>Ngày đặt hàng:</strong> {`${bill.createAt[3]}:${bill.createAt[4]}:${bill.createAt[5]} ${bill.createAt[2]}/${bill.createAt[1]}/${bill.createAt[0]}`}
                             </div>
 
                             <div className="method">
-                                <strong>Phương thức thanh toán:</strong> {bill.Pay_method}
+                                <strong>Phương thức thanh toán:</strong> {bill.payMethod}
                             </div>
 
                             <div className="address-order">
-                                <strong>Địa chỉ giao hàng:</strong> {bill.Note}
+                                <strong>Địa chỉ giao hàng:</strong> {bill.address}
 
                             </div>
 
                             <div className="total-money">
                                 <p>
                                     <span className="total-money-title"><strong>Tổng tiền</strong></span>
-                                    <span className="price total-money-main">{VND.format(bill.Total)}</span>
+                                    <span className="price total-money-main">{VND.format(bill.total)}</span>
                                 </p>
-
-
                             </div>
                         </div>
                     )}
@@ -199,8 +179,10 @@ const OrderHistory = () => {
 
 
 
+                    {billData.length!==0&&<div className="pagination">
+                        <Pagination count={totalPages} page={pageNumber + 1} onChange={handleChangePageNumber} />
+                    </div>}
                 </div>
-
 
 
 

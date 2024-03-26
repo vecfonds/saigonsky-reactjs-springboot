@@ -4,72 +4,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import './Payment.css'
 import { useDispatch, useSelector } from 'react-redux';
-import axios from "axios";
 import { userSelector } from '../../store/features/userSlice';
 import { FormControl, MenuItem, Select } from '@mui/material';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { clearDataShoppingCart, shoppingCartSelector } from '../../store/features/shoppingCartSlice';
+import { clearDataShoppingCart, getCart, shoppingCartSelector } from '../../store/features/shoppingCartSlice';
+import { addBill, billSelector, clearDataBill } from '../../store/features/billSlice';
+import {notifySuccess, notifyWarning} from "./../../components/Toastify/Toastify";
 
 const VND = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND',
 });
 
-
-const notifySuccess = (text) => toast.success(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-});
-
-const notifyError = (text) => toast.error(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-});
-
-const notifyWarning = (text) => toast.warning(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-});
-
-
 const validationSchema = z
     .object({
-        fullname: z.string().min(1, { message: "Name is required" }),
-        phonenumber: z.string().min(10, { message: "Số điện thoại phải ít nhất 10 chữ số" }),
+        username: z.string().min(1, { message: "Name is required" }),
+        phoneNumber: z.string().min(10, { message: "Số điện thoại gồm 10 chữ số" }),
         address: z.string().min(1, { message: "Name is required" }),
     })
     ;
-
 
 const Payment = () => {
     const dispatch = useDispatch();
 
     const {
-        Address,
-        Id,
-        Name,
-        Phone_number,
+        username,
+        phoneNumber,
+        address,
     } = useSelector(userSelector);
 
+
+    const {
+        isSuccessAddBill
+    } = useSelector(billSelector);
 
     const {
         register,
@@ -81,11 +49,22 @@ const Payment = () => {
     });
 
     useEffect(() => {
-        setValue("fullname", Name);
-        setValue("phonenumber", Phone_number);
-        setValue("address", Address);
+        dispatch(getCart());
     }, [])
 
+    useEffect(() => {
+        setValue("username", username);
+        setValue("phoneNumber", phoneNumber);
+        setValue("address", address);
+    }, [username, phoneNumber, address])
+
+    useEffect(() => {
+        if(isSuccessAddBill){
+            dispatch(clearDataBill());
+            dispatch(clearDataShoppingCart());
+            notifySuccess("Đặt hàng thành công!");
+        }
+    }, [isSuccessAddBill]);
 
     const [method, setMethod] = useState("Phương thức thanh toán");
 
@@ -93,63 +72,21 @@ const Payment = () => {
         dataShoppingCart
     } = useSelector(shoppingCartSelector);
 
-    // console.log("dataShoppingCart", dataShoppingCart);
-
     const onSubmit = (data) => {
         if (method === "Phương thức thanh toán") {
             notifyWarning("Bạn cần chọn phương thức thanh toán");
 
         } else {
-            const configData = {
-                method,
-                note: data.address,
-                customerID: Id,
-                product: dataShoppingCart.map(product => {
-                    return {
-                        id: product.data.Id,
-                        count: product.quantity,
-                        size: product.size,
-                        color: product.color,
-                        rate: 1
-                    }
-                })
-            }
-
-            // console.log("configData", configData)
-
-            // console.log(data);
-
-
-            axios
-                .post(
-                    "http://localhost/LTW_BE-dev/Controllers/CreateBill.php",
-                    configData,
-                )
-                .then((res) => {
-                    // console.log("CreateBill.php", res.data);
-                    // setMessage(res.data.message);
-                    if (res.data.isSuccess === true) {
-                        // console.log("dispatch");
-                        dispatch(clearDataShoppingCart());
-                        notifySuccess(res.data.message);
-                    }
-                    else {
-                        notifyError(res.data.message);
-                    }
-                })
-                .catch((err) => {
-                    // console.log("err", err)
-                });
+            dispatch(addBill({payMethod:method}));
         }
 
     }
-    // const [message, setMessage] = useState("");
 
     const priceTotal = () => {
         var sum = 0;
 
         for (var i = 0; i < dataShoppingCart?.length; ++i) {
-            sum += dataShoppingCart[i]?.data.Price * dataShoppingCart[i]?.quantity;
+            sum += dataShoppingCart[i]?.product.price * dataShoppingCart[i]?.quantity;
         }
 
         return sum;
@@ -169,41 +106,42 @@ const Payment = () => {
                                     <input
                                         autoComplete="off"
                                         type="text"
-                                        id="fullname"
+                                        id="username"
                                         placeholder=" "
-                                        {...register("fullname")}
+                                        {...register("username")}
+                                        disabled
+                                        className="not-allowed"
                                     // value={Name}
                                     />
                                     <label>Họ và tên</label>
                                 </div>
-                                {errors.fullname && (
+                                {errors.username && (
                                     <p className="textDanger">
-                                        {errors.fullname?.message}
+                                        {errors.username?.message}
                                     </p>
                                 )}
                             </div>
-
-
 
                             <div className="form-groupS">
                                 <div className="form-group">
                                     <input
                                         autoComplete="off"
                                         type="tel"
-                                        name="phonenumber"
+                                        name="phoneNumber"
                                         placeholder=" "
-                                        {...register("phonenumber")}
-                                    // value={Phone_number}
+                                        {...register("phoneNumber")}
+                                        disabled
+                                        className="not-allowed"
+                                        // value={Phone_number}
                                     />
                                     <label>Số điện thoại</label>
                                 </div>
-                                {errors.phonenumber && (
+                                {errors.phoneNumber && (
                                     <p className="textDanger">
-                                        {errors.phonenumber?.message}
+                                        {errors.phoneNumber?.message}
                                     </p>
                                 )}
                             </div>
-
 
                             <div className="form-groupS">
                                 <div className="form-group">
@@ -213,7 +151,9 @@ const Payment = () => {
                                         name="address"
                                         placeholder=" "
                                         {...register("address")}
-                                    // value={Address}
+                                        disabled
+                                        className="not-allowed"
+                                        // value={Address}
                                     />
                                     <label>Địa chỉ giao hàng</label>
                                 </div>
@@ -267,27 +207,25 @@ const Payment = () => {
                 <div className="payment-main-right">
                     <div className='mobile-shoppingcart'>
                         <div className='mobile-shoppingcart-center'>
-                            {dataShoppingCart.map((product) => (
+                            {dataShoppingCart.map((cartItem) => (
                                 <div className='product-cart-shopping'
-                                    key={`${product.data.Id}-${product.color}-${product.size}`}>
+                                    key={`${cartItem.product.id}-${cartItem.color}-${cartItem.size}`}>
                                     <div className="product-cart-shopping-img">
-                                        <img src={`${product.data.image.filter(i => i.Main === 1)[0]?.Content}`} alt="" />
+                                        <img src={`${cartItem.product.images.filter(i => i.main === 1)[0]?.content}`} alt="" />
                                     </div>
                                     <div className="product-cart-shopping-detail">
-                                        <h2 className="title">{product.data.Name}</h2>
+                                        <h2 className="title">{cartItem.product.name}</h2>
                                         <div className='subtitle'>
-                                            <p className="brand-name"><strong>Thương hiệu:</strong> {product.data.Album}</p>
-                                            <p><strong>Phiên bản:</strong> {product.size} / {product.color}</p>
+                                            <p className="brand-name"><strong>Thương hiệu:</strong> {cartItem.product.album}</p>
+                                            <p><strong>Phiên bản:</strong> {cartItem.size} / {cartItem.color}</p>
                                         </div>
-
                                         <div className="quantity-cart">
                                             <div className="quantity-input">
-                                                <input className="quantity-input" type="text" value={product.quantity} readOnly />
+                                                <input className="quantity-input" type="text" value={cartItem.quantity} readOnly />
                                             </div>
-
                                         </div>
                                         <div className='footer-card'>
-                                            <p className="price">{VND.format(product.data.Price)}</p>
+                                            <p className="price">{VND.format(cartItem.product.price)}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -300,7 +238,6 @@ const Payment = () => {
                             </p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

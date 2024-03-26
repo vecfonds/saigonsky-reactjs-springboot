@@ -205,4 +205,11 @@ public class ProductServiceImpl implements ProductService {
 
         return convertProductDTO(productUpdated);
     }
+
+    @Override
+    public ProductDTO getProduct(Long productId) {
+        Product productInDB = productRepository.findById(productId)
+                .orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+        return convertProductDTO(productInDB);
+    }
 }

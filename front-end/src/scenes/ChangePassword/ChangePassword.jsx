@@ -3,112 +3,69 @@ import { NavLink } from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {  useSelector } from 'react-redux';
-import {  userSelector } from '../../store/features/userSlice';
-import axios from 'axios';
+import {  useDispatch, useSelector } from 'react-redux';
+import {  changePassword, clearState, userSelector } from '../../store/features/userSlice';
 import './ChangePassword.css'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const notifySuccess = (text) => toast.success(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-});
-
-const notifyError = (text) => toast.error(text, {
-    position: "bottom-left",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-});
-
+import { notifyError, notifySuccess } from '../../components/Toastify/Toastify';
 
 const validationSchema = z
     .object({
         oldPassword: z
             .string()
-            .min(6, { message: "Password must be atleast 6 characters" }),
+            .min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }),
         password: z
             .string()
-            .min(6, { message: "Password must be atleast 6 characters" }),
+            .min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }),
         confirmPassword: z
             .string()
-            .min(1, { message: "Confirm Password is required" }),
+            .min(1, { message: "Xác nhận mật khẩu là bắt buộc" }),
     }).refine((data) => data.password === data.confirmPassword, {
         path: ["confirmPassword"],
-        message: "Password don't match",
+        message: "Mật khẩu không khớp",
     });
 
 
 const ChangePassword = () => {
+    const dispatch = useDispatch();
+
     const [hiddenOldPwd, setHiddenOldPwd] = useState(false);
     const [hiddenPwd, setHiddenPwd] = useState(false);
     const [hiddenConfirmPwd, setHiddenConfirmPwd] = useState(false);
 
     const {
-        Address,
-        Name,
-        Phone_number,
+        username,
+        message,
+        isSuccessChangePassword,
+        isError
     } = useSelector(userSelector);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-        setValue,
     } = useForm({
         resolver: zodResolver(validationSchema),
     });
 
     useEffect(() => {
-        setValue("fullname", Name);
-        setValue("phonenumber", Phone_number);
-        setValue("address", Address);
-
-    }, [])
-
-    // const [message, setMessage] = useState("");
+        if(isSuccessChangePassword){
+            notifySuccess(message);
+            dispatch(clearState());
+        }
+        else if(isError){
+            notifyError(message);
+            dispatch(clearState());
+        }
+    }, [message, isSuccessChangePassword, isError]);
 
     const onSubmit = (data) => {
-        axios
-            .post(
-                "http://localhost/LTW_BE-dev/Controllers/ChangePassword.php",
-                {
-                    phoneNumber: Phone_number,
-                    oldPassword: data.oldPassword,
-                    newPassword: data.password
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            )
-            .then((res) => {
-                // setMessage(res.data.message);
-                if (res.data.isSuccess === true) {
-                    // console.log("ok", res.data.isSuccess);
-                    notifySuccess(res.data.message);
-                }
-                else {
-                    notifyError(res.data.message);
-                }
-            })
-            .catch((err) => {
-                // console.log("err", err);
-            });
-
-
+        dispatch(changePassword({
+            currentPassword: data.oldPassword,
+            newPassword: data.password,
+            confirmationPassword: data.confirmPassword
+        }));
     }
 
     const navLinkClass = ({ isActive }) => {
@@ -119,7 +76,7 @@ const ChangePassword = () => {
     return (
         <div id='change-password'>
             <ToastContainer />
-            <div className="headeri">Xin chào {Name}</div>
+            <div className="headeri">Xin chào {username}</div>
             <div className="personal-information">
                 <div className="personal-information-left">
                     <div className="category--list">
@@ -168,14 +125,9 @@ const ChangePassword = () => {
                                         </p>
                                     )
                                 }
-
                             </div>
 
-
-
                             <div className="form-groupP">
-
-
                                 <div className="form-group2">
                                     <div className="pass-box">
                                         <input placeholder=" "
@@ -199,7 +151,6 @@ const ChangePassword = () => {
                                         </p>
                                     )
                                 }
-
                             </div>
 
                             <div className="form-groupP">
@@ -223,19 +174,11 @@ const ChangePassword = () => {
                                     </p>
                                 )}
                             </div>
-                            {/* {message &&
-                                <p className="textDanger" style={{ textAlign: "center" }}>
-                                    {message}
-                                </p>} */}
-
                         </div>
-
 
                         <button className="submit-btn" type="submit">
                             Lưu
                         </button>
-
-
                     </form>
                 </div>
             </div>

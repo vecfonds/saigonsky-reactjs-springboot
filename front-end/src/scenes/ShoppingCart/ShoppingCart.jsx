@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import './ShoppingCart.css'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,7 +12,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteShoppingCart, setQuantityProduct, shoppingCartSelector } from '../../store/features/shoppingCartSlice';
+import { deleteProductInCart, deleteShoppingCart, getCart, shoppingCartSelector, updateProductQuantityInCart } from '../../store/features/shoppingCartSlice';
 import { motion } from "framer-motion"
 
 const VND = new Intl.NumberFormat('vi-VN', {
@@ -24,10 +24,12 @@ const ShoppingCart = () => {
     const dispatch = useDispatch();
 
     const {
-        dataShoppingCart
+        dataShoppingCart,
     } = useSelector(shoppingCartSelector);
 
-    // console.log("dataShoppingCart", dataShoppingCart);
+    useEffect(() => {
+        dispatch(getCart());
+    }, []);
 
     const offscreen = { y: "1.5rem", opacity: 0 };
     const onscreen = {
@@ -44,7 +46,7 @@ const ShoppingCart = () => {
         var sum = 0;
 
         for (var i = 0; i < dataShoppingCart?.length; ++i) {
-            sum += dataShoppingCart[i]?.data.Price * dataShoppingCart[i]?.quantity;
+            sum += dataShoppingCart[i]?.product.price * dataShoppingCart[i]?.quantity;
         }
 
         return sum;
@@ -101,41 +103,47 @@ const ShoppingCart = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {dataShoppingCart.map((product) => (
+                            {dataShoppingCart.map((cartItem) => (
                                 <TableRow
-                                    key={`${product.data.Id}-${product.color}-${product.size}`}
+                                    key={`${cartItem.id}-${cartItem.color}-${cartItem.size}`}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row" align="center" >
                                         <div className='product-cart-shopping'>
                                             <div className="product-cart-shopping-img">
-                                                <img src={`${product.data.image.filter(i => i.Main === 1)[0]?.Content}`} alt="" />
+                                                <img src={`${cartItem.product.images.filter(i => i.main === 1)[0]?.content}`} alt={`${cartItem.product.name}`} />
                                             </div>
                                             <div className="product-cart-shopping-detail">
-                                                <h2 className="title">{product.data.Name}</h2>
+                                                <h2 className="title">{cartItem.product.name}</h2>
                                                 <div className='subtitle'>
-                                                    <p className="brand-name"><strong>Thương hiệu:</strong> {product.data.Album}</p>
-                                                    <p className="product-code"><strong>Mã SP:  </strong> {product.data.Id}</p>
+                                                    <p className="brand-name"><strong>Thương hiệu:</strong> {cartItem.product.album}</p>
+                                                    <p className="product-code"><strong>Mã SP:  </strong> {cartItem.product.id}</p>
 
-                                                    <p><strong>Phiên bản:</strong> {product.size} / {product.color}</p>
+                                                    <p><strong>Phiên bản:</strong> {cartItem.size} / {cartItem.color}</p>
                                                 </div>
                                             </div>
                                         </div>
 
                                     </TableCell>
-                                    <TableCell align="center">{VND.format(product.data.Price)}</TableCell>
+                                    <TableCell align="center">{VND.format(cartItem.product.price)}</TableCell>
                                     <TableCell align="center">
                                         <div className="quantity-cart">
                                             <div className="quantity-input">
-                                                <ArrowBackIosIcon fontSize='small' onClick={() => { dispatch(setQuantityProduct({ data: product, quantity: product.quantity > 1 ? product.quantity - 1 : 1 })) }} sx={{ cursor: "pointer" }} />
-                                                <input className="quantity-input" type="text" value={product.quantity} readOnly />
-                                                <ArrowForwardIosIcon fontSize='small' onClick={() => { dispatch(setQuantityProduct({ data: product, quantity: product.quantity + 1 })) }} sx={{ cursor: "pointer" }} />
+                                                {/* <ArrowBackIosIcon fontSize='small' onClick={() => { dispatch(updateProductQuantityInCart({ data: cartItem, quantity: cartItem.quantity > 1 ? cartItem.quantity - 1 : 1 })) }} sx={{ cursor: "pointer" }} /> */}
+                                                <ArrowBackIosIcon fontSize='small' onClick={() => { dispatch(updateProductQuantityInCart({ productId: cartItem.product.id, quantity: cartItem.quantity > 1 ? cartItem.quantity - 1 : 1, size: cartItem.size, color: cartItem.color })) }} sx={{ cursor: "pointer" }} />
+                                                <input className="quantity-input" type="text" value={cartItem.quantity} readOnly />
+                                                {/* <ArrowForwardIosIcon fontSize='small' onClick={() => { dispatch(setQuantityProduct({ data: cartItem, quantity: cartItem.quantity + 1 })) }} sx={{ cursor: "pointer" }} /> */}
+                                                <ArrowForwardIosIcon fontSize='small' onClick={() => { dispatch(updateProductQuantityInCart({ productId: cartItem.product.id, quantity: cartItem.quantity + 1, size: cartItem.size, color: cartItem.color })) }} sx={{ cursor: "pointer" }} />
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell align="center">{VND.format(product.data.Price * product.quantity)}</TableCell>
+                                    <TableCell align="center">{VND.format(cartItem.product.price * cartItem.quantity)}</TableCell>
                                     <TableCell align="center">
-                                        <DeleteOutlineIcon sx={{ cursor: "pointer" }} onClick={() => dispatch(deleteShoppingCart(product))} />
+                                        <DeleteOutlineIcon sx={{ cursor: "pointer" }} onClick={() => {
+                                            dispatch(deleteProductInCart({ productId: cartItem.product.id, size: cartItem.size, color: cartItem.color }));
+                                            dispatch(deleteShoppingCart(cartItem));
+                                        }
+                                        } />
                                     </TableCell>
 
                                 </TableRow>
@@ -147,35 +155,39 @@ const ShoppingCart = () => {
 
                 <div className='mobile-shoppingcart'>
                     <div className='mobile-shoppingcart-center'>
-                        {dataShoppingCart.map((product) => (
+                        {dataShoppingCart.map((cartItem) => (
                             <div className='product-cart-shopping'
-                                key={`${product.data.Id}-${product.color}-${product.size}`}>
+                                key={`${cartItem.id}-${cartItem.color}-${cartItem.size}`}>
                                 <div className="product-cart-shopping-img">
-                                    <img src={`${product.data.image.filter(i => i.Main === 1)[0]?.Content}`} alt="" />
+                                    <img src={`${cartItem.product.images.filter(i => i.main === 1)[0]?.content}`} alt="" />
                                 </div>
                                 <div className="product-cart-shopping-detail">
-                                    <h2 className="title">{product.data.Name}</h2>
+                                    <h2 className="title">{cartItem.product.name}</h2>
                                     <div className='subtitle'>
-                                        <p className="brand-name"><strong>Thương hiệu:</strong> {product.data.Album}</p>
-                                        <p><strong>Phiên bản:</strong> {product.size} / {product.color}</p>
+                                        <p className="brand-name"><strong>Thương hiệu:</strong> {cartItem.product.album}</p>
+                                        <p><strong>Phiên bản:</strong> {cartItem.size} / {cartItem.color}</p>
                                     </div>
 
                                     <div className="quantity-cart">
                                         <div className="quantity-input">
 
-                                            <ArrowBackIosIcon fontSize='small' onClick={() => { dispatch(setQuantityProduct({ data: product, quantity: product.quantity > 1 ? product.quantity - 1 : 1 })) }} sx={{ cursor: "pointer" }} />
+                                            <ArrowBackIosIcon fontSize='small' onClick={() => { dispatch(updateProductQuantityInCart({ productId: cartItem.product.id, quantity: cartItem.quantity > 1 ? cartItem.quantity - 1 : 1, size: cartItem.size, color: cartItem.color })) }} sx={{ cursor: "pointer" }} />
 
-                                            <input className="quantity-input" type="text" value={product.quantity} readOnly />
+                                            <input className="quantity-input" type="text" value={cartItem.quantity} readOnly />
 
-                                            <ArrowForwardIosIcon fontSize='small' onClick={() => { dispatch(setQuantityProduct({ data: product, quantity: product.quantity + 1 })) }} sx={{ cursor: "pointer" }} />
+                                            <ArrowForwardIosIcon fontSize='small' onClick={() => { dispatch(updateProductQuantityInCart({ productId: cartItem.product.id, quantity: cartItem.quantity + 1, size: cartItem.size, color: cartItem.color })) }} sx={{ cursor: "pointer" }} />
                                         </div>
 
                                     </div>
                                     <div className='footer-card'>
 
-                                        <p className="price">{VND.format(product.data.Price * product.quantity)}</p>
+                                        <p className="price">{VND.format(cartItem.product.price * cartItem.quantity)}</p>
 
-                                        <DeleteOutlineIcon sx={{ cursor: "pointer" }} onClick={() => dispatch(deleteShoppingCart(product))} />
+                                        <DeleteOutlineIcon sx={{ cursor: "pointer" }} onClick={() => {
+                                            dispatch(deleteProductInCart({ productId: cartItem.product.id, size: cartItem.size, color: cartItem.color }));
+                                            dispatch(deleteShoppingCart(cartItem));
+                                        }
+                                        } />
                                     </div>
                                 </div>
                             </div>

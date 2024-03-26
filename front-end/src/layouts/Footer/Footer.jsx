@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import './Footer.css';
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { categorySelector, getListCategory } from "../../store/features/categorySlice";
 
 function Footer() {
+    const dispatch = useDispatch();
+    const {
+        dataCategory
+    } = useSelector(categorySelector);
+
+    useEffect(() => {
+        dispatch(getListCategory());
+    }, []);
+    
     return (
         <div className="footer">
             <div className="conn-social">
@@ -44,33 +55,31 @@ function Footer() {
 
                 <div className="footer-component">
                     <h6 className="">Products</h6>
-                    <p>
-                        <a href="#!" className="text-reset">Angular</a>
-                    </p>
-                    <p>
-                        <a href="#!" className="text-reset">React</a>
-                    </p>
-                    <p>
-                        <a href="#!" className="text-reset">Vue</a>
-                    </p>
-                    <p>
-                        <a href="#!" className="text-reset">Laravel</a>
-                    </p>
+                    {
+                        dataCategory.map(item =>
+                            <p key={item.id}>
+                                <a href="#!" className="text-reset">{item.name}</a>
+                            </p>
+                        )
+                    }
                 </div>
 
                 <div className="footer-component">
                     <h6 className="">Useful links</h6>
                     <p>
-                        <a href="#!" className="text-reset">Pricing</a>
+                        <a href="/" className="text-reset">Trang chủ</a>
                     </p>
                     <p>
-                        <a href="#!" className="text-reset">Settings</a>
+                        <a href="/gioithieu" className="text-reset">Giới thiệu</a>
                     </p>
                     <p>
-                        <a href="#!" className="text-reset">Orders</a>
+                        <a href="/sanpham" className="text-reset">Sản phẩm</a>
                     </p>
                     <p>
-                        <a href="#!" className="text-reset">Help</a>
+                        <a href="/tintuc" className="text-reset">Tin tức</a>
+                    </p>
+                    <p>
+                        <a href="/lienhe" className="text-reset">Liên hệ</a>
                     </p>
                 </div>
 

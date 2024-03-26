@@ -4,15 +4,14 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './NewProducts.css'
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadDataProducts, productsSelector } from '../../../../store/features/productsSlice';
+import { getListProduct, productsSelector } from '../../../../store/features/productsSlice';
 import { Link } from 'react-router-dom';
 import { Rating } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { favoriteSelector } from '../../../../store/features/FavoriteSlice';
+import { favouriteSelector } from '../../../../store/features/favouriteSlice';
 
 const StyledRating = styled(Rating)({
     '& .MuiRating-iconFilled': {
@@ -23,12 +22,11 @@ const StyledRating = styled(Rating)({
     },
 });
 
-
 const NewProducts = () => {
     const dispatch = useDispatch();
     const {
-        dataFavorite
-    } = useSelector(favoriteSelector);
+        dataFavourite
+    } = useSelector(favouriteSelector);
 
     const offscreen = { y: "1.5rem", opacity: 0 };
     const onscreen = {
@@ -42,60 +40,12 @@ const NewProducts = () => {
     }
 
     useEffect(() => {
-        axios
-            .get(
-                "http://localhost/LTW_BE-dev/Controllers/ShowProduct.php",
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            )
-            .then((res) => {
-                // console.log("ffsdff", res.data);
-                if (res.data.isSuccess === true) {
-                    // console.log("res.data.", res.data.data);
-                    dispatch(loadDataProducts(res.data.data));
-                }
-            })
-            .catch((err) => {
-                // console.log("err", err);
-            });
-
-    }, [])
+        dispatch(getListProduct({ pageNumber:0, pageSize:8, sortBy:"createAt", sortOrder:"des" }));
+    }, []);
 
     const {
         data
     } = useSelector(productsSelector);
-
-
-    const slides = [
-        {
-            img: "/assets/images/products/1.jpg"
-        },
-        {
-            img: "/assets/images/products/2.jpg"
-        },
-        {
-            img: "/assets/images/products/3.jpg"
-        },
-        {
-            img: "/assets/images/products/4.jpg"
-        },
-
-        {
-            img: "/assets/images/products/1.jpg"
-        },
-        {
-            img: "/assets/images/products/2.jpg"
-        },
-        {
-            img: "/assets/images/products/3.jpg"
-        },
-        {
-            img: "/assets/images/products/4.jpg"
-        },
-    ];
 
     var settings = {
         dots: false,
@@ -180,15 +130,16 @@ const NewProducts = () => {
                 viewport={{ once: true }}
             >
                 <Slider {...settings}>
-                    {data.slice(0, 8).map(product =>//-8
+                    {data.map(product =>//-8
                         <div className="product-card">
-                            <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="product-card-img">
+                            <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="product-card-img">
 
-                                <img src={`${product.image.filter(i => i.Main === 1)[0]?.Content}`} alt="item" />
+                                <img src={`${product.images.filter(i => i.main === 1)[0]?.content}`} alt="item" />
                                 <StyledRating
                                     // name="customized-color"
                                     defaultValue={0}
-                                    value={dataFavorite.filter(item => item === product.Id).length}
+                                    value={dataFavourite.filter(item => item?.id === product.id).length}
+
                                     readOnly
                                     getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
                                     precision={1}
@@ -200,7 +151,7 @@ const NewProducts = () => {
                                     name="size-large"
                                 />
                                 <div className="product-card-body">
-                                    <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="btn">MUA NGAY</Link>
+                                    <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="btn">MUA NGAY</Link>
                                 </div>
                             </Link>
                         </div>)}

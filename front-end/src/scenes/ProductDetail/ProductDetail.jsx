@@ -1,4 +1,4 @@
-import React, {  useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './ProductDetail.css'
 import ImageGallery from 'react-image-gallery';
 import Table from '@mui/material/Table';
@@ -9,10 +9,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
-import { tableCellClasses } from '@mui/material/TableCell';
 import { motion } from "framer-motion"
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import Slider from "react-slick";
+import { useNavigate, useParams } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -20,11 +18,12 @@ import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useDispatch, useSelector } from 'react-redux';
-import {  productsSelector } from '../../store/features/productsSlice';
-import { addDataFavorite, deleteDataFavorite, favoriteSelector } from '../../store/features/FavoriteSlice';
-import { addShoppingCart, shoppingCartSelector } from '../../store/features/shoppingCartSlice';
-import { ToastContainer, toast } from 'react-toastify';
+import { clearStateProduct, getListProductSimilar, getProduct, productsSelector } from '../../store/features/productsSlice';
+import { addProductToFavourite, deleteDataFavourite, deleteProductInFavourite, favouriteSelector } from '../../store/features/favouriteSlice';
+import { addProductToCart, clearState, getCart, shoppingCartSelector } from '../../store/features/shoppingCartSlice';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { notifyWarning } from '../../components/Toastify/Toastify';
 
 const VND = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -49,14 +48,15 @@ const sizes = [
 
 ]
 
-
 const ProductDetail = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const {
-        data
+        data,
+        dataProductCurrent,
+        isSuccessDataProductCurrent
     } = useSelector(productsSelector);
 
     const offscreen = { y: "1.5rem", opacity: 0 };
@@ -69,51 +69,6 @@ const ProductDetail = () => {
             // delay: 0.5
         }
     }
-
-
-    var settings = {
-        dots: false,
-        infinite: false,
-        speed: 500,
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        initialSlide: 0,
-        responsive: [
-            {
-                breakpoint: 1280,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3,
-                    initialSlide: 3,
-
-                    // infinite: true,
-                    dots: true
-                }
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2,
-                    initialSlide: 2,
-                    dots: true
-
-                }
-            },
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    dots: true
-
-                }
-            }
-        ]
-    };
-
-
-
 
     const [quantity, setQuantity] = useState(1);
 
@@ -145,81 +100,95 @@ const ProductDetail = () => {
     });
 
     const {
-        dataFavorite
-    } = useSelector(favoriteSelector);
-
-    // console.log("dataFavorite", dataFavorite)
+        dataFavourite
+    } = useSelector(favouriteSelector);
 
     const {
-        dataShoppingCart
+        dataShoppingCart,
+        messageShoppingCart,
+        isSuccessAddShoppingCart,
     } = useSelector(shoppingCartSelector);
 
-    // console.log("dataShoppingCart", dataShoppingCart)
+    useEffect(() => {
+        // dispatch(getListProductByCategory({ pageNumber: 0, pageSize:8, sortBy:"createAt", sortOrder:"des", categoryId: data.filter(product => product.id === Number(params.productId))[0].category.id }));
+        dispatch(getProduct({ productId: params.productId }));
+        dispatch(getCart());
+    }, []);
+
+    useEffect(() => {
+        // dispatch(getListProductByCategory({ pageNumber: 0, pageSize:8, sortBy:"createAt", sortOrder:"des", categoryId: data.filter(product => product.id === Number(params.productId))[0].category.id }));
+        if (isSuccessDataProductCurrent) {
+            dispatch(getListProductSimilar({ pageNumber: 0, pageSize: 8, sortBy: "createAt", sortOrder: "des", categoryId: dataProductCurrent?.category?.id }));
+            dispatch(clearStateProduct());
+        }
+    }, [isSuccessDataProductCurrent, dataProductCurrent]);
+
+    useEffect(() => {
+        if (messageShoppingCart === "Full authentication is required to access this resource") {
+            dispatch(clearState());
+            navigate("/dangnhap");
+        }
+        else if (messageShoppingCart) {
+            notifyWarning(messageShoppingCart);
+            dispatch(clearState());
+        }
+        else if (isSuccessAddShoppingCart) {
+            dispatch(clearState());
+            navigate("/giohang");
+        }
+    }, [messageShoppingCart, isSuccessAddShoppingCart]);
 
     function handleClickFavorite() {
-        if (dataFavorite.filter(item => item === params.productId).length) {
-            dispatch(deleteDataFavorite(params.productId));
+        if (dataFavourite.filter(item => item?.id === Number(params.productId)).length) {
+            dispatch(deleteProductInFavourite({ productId: params.productId }));
+            dispatch(deleteDataFavourite(Number(params.productId)));
         }
         else {
-            dispatch(addDataFavorite(params.productId));
-
+            dispatch(addProductToFavourite({ productId: params.productId }));
         }
     }
 
-    const dataProductDetail = data.filter(product => product.Id === params.productId)[0];
     const rows = [
-        createData('Chất liệu', dataProductDetail.Material),
-        createData('Kiểu dáng', dataProductDetail.Style),
-        createData('Sản phẩm thuộc dòng sản phẩm', dataProductDetail.Album),
-        createData('Thông tin người mẫu', dataProductDetail.Model),
-        createData('Sản phẩm kết hợp', dataProductDetail.Connect),
+        createData('Chất liệu', dataProductCurrent.material),
+        createData('Kiểu dáng', dataProductCurrent.style),
+        createData('Sản phẩm thuộc dòng sản phẩm', dataProductCurrent.album),
+        createData('Thông tin người mẫu', dataProductCurrent.model),
+        createData('Sản phẩm kết hợp', dataProductCurrent.connect),
     ];
 
-    const notify = (text) => toast.warning(text, {
-        position: "bottom-left",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-    });
-
     function handleAddCart() {
-        if (dataShoppingCart.filter(item => item.data.Id === dataProductDetail.Id && item.color === color && item.size === size).length) {
-            notify("Sản phẩm này đã có trong giỏ hàng!");
+        if (dataShoppingCart.filter(item => item.product.id === dataProductCurrent.id && item.color === color && item.size === size).length) {
+            notifyWarning("Sản phẩm "+dataProductCurrent.name+" với màu " +color +", " + size +" này đã có trong giỏ hàng!");
         }
         else {
-            dispatch(addShoppingCart({ data: dataProductDetail, size, color, quantity }))
-            navigate("/giohang");
+            dispatch(addProductToCart({ productId: dataProductCurrent.id, quantity, size, color }));
         }
     }
 
     function handlePayment() {
-        if (dataShoppingCart.filter(item => item.data.Id === dataProductDetail.Id && item.color === color && item.size === size).length) {
-            notify("Sản phẩm này đã có trong giỏ hàng!");
+        if (dataShoppingCart.filter(item => item.product.id === dataProductCurrent.id && item.color === color && item.size === size).length) {
+            notifyWarning("Sản phẩm "+dataProductCurrent.name+" với màu " +color +", " + size +" này đã có trong giỏ hàng!");
         }
         else {
-            dispatch(addShoppingCart({ data: dataProductDetail, size, color, quantity }))
+            dispatch(addProductToCart({ productId: dataProductCurrent.id, quantity, size, color }));
             navigate("/thanhtoan");
         }
     }
 
     const images = [
         {
-            original: `${dataProductDetail.image.filter(i => i.Main === 1)[0]?.Content}`,
-            thumbnail: `${dataProductDetail.image.filter(i => i.Main === 1)[0]?.Content}`,
+            original: `${dataProductCurrent?.images?.filter(i => i.main === 1)[0]?.content}`,
+            thumbnail: `${dataProductCurrent?.images?.filter(i => i.main === 1)[0]?.content}`,
 
         },
         {
-            original: `${dataProductDetail.image.filter(i => i.Main === 0)[0]?.Content}`,
-            thumbnail: `${dataProductDetail.image.filter(i => i.Main === 0)[0]?.Content}`,
+            original: `${dataProductCurrent?.images?.filter(i => i.main === 0)[0]?.content}`,
+            thumbnail: `${dataProductCurrent?.images?.filter(i => i.main === 0)[0]?.content}`,
 
         },
         {
-            original: `${dataProductDetail.image.filter(i => i.Main === 0)[1]?.Content}`,
-            thumbnail: `${dataProductDetail.image.filter(i => i.Main === 0)[1]?.Content}`,
+            original: `${dataProductCurrent?.images?.filter(i => i.main === 0)[1]?.content}`,
+            thumbnail: `${dataProductCurrent?.images?.filter(i => i.main === 0)[1]?.content}`,
 
         },
     ];
@@ -298,12 +267,11 @@ const ProductDetail = () => {
                         style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
                     >
                         <h2 className="title">
-                            {dataProductDetail.Name}
+                            {dataProductCurrent.name}
                         </h2>
                         <StyledRating
-                            // name="customized-color"
                             defaultValue={0}
-                            value={dataFavorite.filter(item => item === params.productId).length}
+                            value={dataFavourite.filter(item => item?.id === Number(params.productId)).length}
                             onClick={handleClickFavorite}
                             getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
                             precision={1}
@@ -317,15 +285,14 @@ const ProductDetail = () => {
                     </motion.div>
 
                     <div className='subtitle'>
-                        <p className="brand-name"><strong>Thương hiệu:</strong> {dataProductDetail?.Album}</p>
-                        <p className="product-code"><strong>Mã SP:</strong> {params.productId}</p>
+                        <p className="brand-name"><strong>Thương hiệu:</strong> {dataProductCurrent?.album}</p>
+                        <p className="product-code"><strong>Mã SP:</strong> {Number(params.productId)}</p>
                     </div>
 
-                    <p className="price">{VND.format(dataProductDetail?.Price)}</p>
-
+                    <p className="price">{VND.format(dataProductCurrent?.price)}</p>
 
                     <div className="size">
-                        <p><strong>Kích thước:</strong> Size {size}</p>
+                        <p><strong>Kích thước:</strong> {size}</p>
 
                         <div className='select-size'>
                             <div className={size === "Size 4" && "size-checked"} onClick={() => setSize("Size 4")}>Size 4
@@ -342,7 +309,6 @@ const ProductDetail = () => {
                         </div>
                     </div>
                     <div className="color">
-
                         <p><strong>Màu sắc:</strong> {color}</p>
                         <div className='select-color'>
                             <div className={color === "Vàng" && "color-checked"} onClick={() => setColor("Vàng")}>Vàng
@@ -394,40 +360,43 @@ const ProductDetail = () => {
                 </div>
             </div>
 
-            <div className='line'></div>
+            {/* <div className='line'></div>
 
             <div className='similar-product'>
                 <motion.div
-                    initial={offscreen}
-                    whileInView={onscreen}
-                    viewport={{ once: true }}
+                initial={offscreen}
+                whileInView={onscreen}
+                viewport={{ once: true }}
                 >
                     <div className="headeri">SẢN PHẨM TƯƠNG TỰ</div>
                 </motion.div>
 
                 <motion.div
-                    initial={{ position: "relative", opacity: 0 }}
-                    whileInView={{
-                        opacity: 1,
-                        transition: {
-                            duration: 2,
-                            type: "spring",
-                            delay: 1.5
-                        }
-                    }}
-                    viewport={{ once: true }}
+                initial={{ position: "relative", opacity: 0 }}
+                whileInView={{
+                    opacity: 1,
+                    transition: {
+                        duration: 2,
+                        type: "spring",
+                        delay: 1.5
+                    }
+                }}
+                viewport={{ once: true }}
                 >
                     <Slider {...settings}
                         className='similar-product-slider'
                     >
-                        {data.filter(item => item.Type === dataProductDetail?.Type && item.Id !== params.productId).slice(0, 4).map(product =>
-                            <div className="product-card">
-                                <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="product-card-img">
-                                    <img src={`${product.image.filter(i => i.Main === 1)[0]?.Content}`} alt="item" />
+                        {dataProductSimilar.filter(x => x.id !== Number(params.productId)).map(product =>
+                            <div className="product-card" key={product.id}
+                                onClick={()=>dispatch(getProduct({ productId: params.productId }))}
+                            >
+                                <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="product-card-img">
+                                    <img src={`${product.images.filter(i => i.main === 1)[0]?.content}`} alt="item" />
                                     <StyledRating
                                         // name="customized-color"
                                         defaultValue={0}
-                                        value={dataFavorite.filter(item => item === product.Id).length}
+                                        // value={dataFavourite.filter(item => item.id === product.id).length}
+                                        value={dataFavourite.filter(item => item?.id === product.id).length}
                                         readOnly
                                         getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
                                         precision={1}
@@ -439,19 +408,18 @@ const ProductDetail = () => {
                                         name="size-large"
                                     />
                                     <div className="product-card-body">
-                                        <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="btn">MUA NGAY</Link>
+                                        <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="btn">MUA NGAY</Link>
                                     </div>
                                 </Link>
 
                                 <div className="product-card-detail">
-                                    <Link to={`/sanpham/${product.Id}`} state={{ id: product.Id }} className="name">{product.Name}</Link>
-                                    <p className="price">Giá: {VND.format(product?.Price)}</p>
-
+                                    <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="name">{product.name}</Link>
+                                    <p className="price">Giá: {VND.format(product?.price)}</p>
                                 </div>
                             </div>)}
                     </Slider>
                 </motion.div>
-            </div>
+            </div> */}
         </div>
     )
 }

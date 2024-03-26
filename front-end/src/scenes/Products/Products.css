@@ -431,6 +431,22 @@ span {
 
 } */
 
+.message-warning{
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    /* margin: 2rem 0; */
+}
+
+.message-warning img{
+    width: 300px;
+}
+
+.pagination{
+    display: flex;
+    justify-content: center;
+}
+
 @media screen and (max-width: 1075px) {
     .form-sort>p {
         display: none;

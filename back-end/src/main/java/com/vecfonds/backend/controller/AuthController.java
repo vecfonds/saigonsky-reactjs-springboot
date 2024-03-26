@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -50,7 +51,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
         if(userService.createUser(request)){
-            return new ResponseEntity<>(new MessageResponse("Đăng ký tài khoản thành công!"), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageResponse("Đăng ký tài khoản thành công!"), HttpStatus.CREATED);
         }
         else {
             return new ResponseEntity<>(new MessageResponse("Số điện thoại đã được sử dụng!"), HttpStatus.BAD_REQUEST);
