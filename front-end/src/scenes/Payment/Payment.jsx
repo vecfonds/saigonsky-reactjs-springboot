@@ -19,9 +19,9 @@ const VND = new Intl.NumberFormat('vi-VN', {
 
 const validationSchema = z
     .object({
-        username: z.string().min(1, { message: "Name is required" }),
+        username: z.string().min(1, { message: "Tên là bắc buộc" }),
         phoneNumber: z.string().min(10, { message: "Số điện thoại gồm 10 chữ số" }),
-        address: z.string().min(1, { message: "Name is required" }),
+        address: z.string().min(1, { message: "Địa chỉ là bắt buộc" }),
     })
     ;
 
