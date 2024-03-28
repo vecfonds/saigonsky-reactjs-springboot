@@ -42,22 +42,22 @@ export const getListCategory = createAsyncThunk(
   
     extraReducers: {
       [getListCategory.pending]: (state) => {
-        console.log("getListCategory.pending", state)
+        // console.log("getListCategory.pending", state)
         state.isFetching = true;
       },
   
       [getListCategory.fulfilled]: (state, action) => {
-        console.log("getListCategory.fulfilled", action.payload)
+        // console.log("getListCategory.fulfilled", action.payload)
         state.isFetching = false;
         state.isSuccess = true;
         state.dataCategory = action.payload;
       },
   
       [getListCategory.rejected]: (state, action) => {
-        console.log("getListCategory.rejected", action)
+        // console.log("getListCategory.rejected", action)
         state.isFetching = false;
         state.isError = true;
-        state.message = action.payload.message;
+        // state.message = action.payload.message;
       },
     },
   });

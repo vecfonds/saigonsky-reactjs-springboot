@@ -63,11 +63,11 @@ const OrderHistory = () => {
                 <div className="personal-information-right">
 
                     {billData?.map(bill =>
-                        <div className="bill">
+                        <div className="bill" key={bill.id}>
                             <div className='mobile-shoppingcart'>
                                 <div className='mobile-shoppingcart-center'>
                                     {bill.billDetails?.map((billDetail) => (
-                                        <div className='product-cart-shopping'>
+                                        <div className='product-cart-shopping' key={billDetail.id}>
                                             <div className="product-cart-shopping-img">
                                                 <img src={`${billDetail.product.images.filter(i => i.main === 1)[0]?.content}`} alt={`${billDetail.product.name}`} />
                                             </div>

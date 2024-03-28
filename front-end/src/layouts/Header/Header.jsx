@@ -35,7 +35,7 @@ function Header() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-      dispatch(getUser());
+        dispatch(getUser());
     }, []);
 
     const [checked, setChecked] = useState(false);
@@ -261,7 +261,7 @@ function Header() {
 
             <div className="login">
                 <div className="btn-log"><Link to='/giohang'><LocalMallOutlinedIcon />Giỏ hàng</Link></div>
-                <div className="btn-log btn-taikhoan"><Link><AccountCircleSharpIcon />{username.split(" ").reverse().slice(0, 2).reverse().join(" ") || username || "Tài khoản"}
+                <div className="btn-log btn-taikhoan"><AccountCircleSharpIcon />{username.split(" ").reverse().slice(0, 2).reverse().join(" ") || username || "Tài khoản"}
                     <ul className='taikhoan'>
                         {
                             username && <>
@@ -272,24 +272,15 @@ function Header() {
                                 <li><Link to='/dangnhap' onClick={() => {
                                     dispatch(logout());
                                     dispatch(clearData());
-                                    }}>Đăng xuất</Link></li>
+                                }}>Đăng xuất</Link></li>
                             </> ||
                             <><li><Link to='/dangnhap'>Đăng nhập</Link></li>
                                 <li><Link to='/dangky'>Đăng ký</Link></li>
                             </>
                         }
-                        {/* <li><Link to='/dangnhap'>Đăng nhập</Link></li>
-                        <li><Link to='/dangky'>Đăng ký</Link></li>
-                        <li><Link to='/taikhoan'>Thông tin tài khoản</Link></li>
-                        <li><Link to='/lichsudonhang'>Lịch sử đơn hàng</Link></li>
-                        <li><Link to='/thaydoimatkhau'>Thay Đổi Mật Khẩu</Link></li> */}
-
                     </ul>
-                </Link></div>
-                {/* <div className="btn-log"><Link to='/dangnhap'><AccountCircleSharpIcon /></Link></div>
-                <div className="btn-log"><Link to='/giohang'><LocalMallOutlinedIcon /></Link></div> */}
-                {/* <AccountCircleSharpIcon />
-                <LocalMallOutlinedIcon /> */}
+                </div>
+
             </div>
             <div className="nav__btn">
                 <div className="frame">

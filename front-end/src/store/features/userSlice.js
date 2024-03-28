@@ -18,10 +18,10 @@ export const getUser = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const response = await userService.getUser();
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -32,10 +32,10 @@ export const updateUser = createAsyncThunk(
   async ({ username, address, phoneNumber }, thunkAPI) => {
     try {
       const response = await userService.updateUser({ username, address, phoneNumber });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -46,10 +46,10 @@ export const changePassword = createAsyncThunk(
   async ({ currentPassword, newPassword, confirmationPassword }, thunkAPI) => {
     try {
       const response = await userService.changePassword({ currentPassword, newPassword, confirmationPassword });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -90,13 +90,13 @@ export const userSlice = createSlice({
 
   extraReducers: {
     [getUser.pending]: (state) => {
-      console.log("getUser.pending", state)
+      // console.log("getUser.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getUser.fulfilled]: (state, action) => {
-      console.log("getUser.fulfilled", action.payload)
+      // console.log("getUser.fulfilled", action.payload)
       state.isSuccessGetUser = true;
       state.isFetching = false;
       state.username = action.payload.username;
@@ -105,46 +105,46 @@ export const userSlice = createSlice({
     },
 
     [getUser.rejected]: (state, action) => {
-      console.log("getUser.rejected", action)
+      // console.log("getUser.rejected", action)
       state.isFetching = false;
-      state.message = action.payload.message;
+      // state.message = action.payload.message;
     },
 
 
     [updateUser.pending]: (state) => {
-      console.log("updateUser.pending", state)
+      // console.log("updateUser.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [updateUser.fulfilled]: (state, action) => {
-      console.log("updateUser.fulfilled", action.payload)
+      // console.log("updateUser.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccessUpdateUser = true;
       state.message = action.payload.message;
     },
 
     [updateUser.rejected]: (state, action) => {
-      console.log("updateUser.rejected", action)
+      // console.log("updateUser.rejected", action)
       state.isError = true;
       state.message = action.payload.message;
     },
 
     [changePassword.pending]: (state) => {
-      console.log("changePassword.pending", state)
+      // console.log("changePassword.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [changePassword.fulfilled]: (state, action) => {
-      console.log("changePassword.fulfilled", action.payload)
+      // console.log("changePassword.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccessChangePassword = true;
       state.message = action.payload.message;
     },
 
     [changePassword.rejected]: (state, action) => {
-      console.log("changePassword.rejected", action)
+      // console.log("changePassword.rejected", action)
       state.isError = true;
       state.message = action.payload.message;
     },

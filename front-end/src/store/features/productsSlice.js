@@ -34,7 +34,7 @@ export const getListProductByCategory = createAsyncThunk(
   "products/getListProductByCategory",
   async ({ pageNumber, pageSize, sortBy, sortOrder, categoryId }, thunkAPI) => {
     try {
-      console.log("categoryId", categoryId)
+      // console.log("categoryId", categoryId)
 
       const response = await productService.getListProductByCategory({ pageNumber, pageSize, sortBy, sortOrder, categoryId });
       // console.log(response)
@@ -50,9 +50,9 @@ export const getListProductByKeyword = createAsyncThunk(
   "products/getListProductByKeyword",
   async ({ pageNumber, pageSize, sortBy, sortOrder, keyword }, thunkAPI) => {
     try {
-      console.log("keyword", keyword)
-      console.log("sortBy", sortBy)
-      console.log("sortOrder", sortOrder)
+      // console.log("keyword", keyword)
+      // console.log("sortBy", sortBy)
+      // console.log("sortOrder", sortOrder)
       const response = await productService.getListProductByKeyword({ pageNumber, pageSize, sortBy, sortOrder, keyword });
       // console.log(response)
       return response.data;
@@ -67,7 +67,7 @@ export const getListProductSimilar = createAsyncThunk(
   "products/getListProductSimilar",
   async ({ pageNumber, pageSize, sortBy, sortOrder, categoryId }, thunkAPI) => {
     try {
-      console.log("categoryId", categoryId)
+      // console.log("categoryId", categoryId)
 
       const response = await productService.getListProductByCategory({ pageNumber, pageSize, sortBy, sortOrder, categoryId });
       // console.log(response)
@@ -122,22 +122,22 @@ export const productsSlice = createSlice({
       return state;
     },
     loadDataProducts: (state, action) => {
-      console.log("action.payload", action.payload);
+      // console.log("action.payload", action.payload);
       // state.data = action.payload;
-      console.log("state", state);
+      // console.log("state", state);
       return state;
     },
   },
 
   extraReducers: {
     [getListProduct.pending]: (state) => {
-      console.log("getListProduct.pending", state)
+      // console.log("getListProduct.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getListProduct.fulfilled]: (state, action) => {
-      console.log("getListProduct.fulfilled", action.payload)
+      // console.log("getListProduct.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccess = true;
       state.data = action.payload.content;
@@ -150,20 +150,20 @@ export const productsSlice = createSlice({
     },
 
     [getListProduct.rejected]: (state, action) => {
-      console.log("getListProduct.rejected", action)
+      // console.log("getListProduct.rejected", action)
       state.isFetching = false;
       state.isError = true;
-      state.message = action.payload.message;
+      // state.message = action.payload.message;
     },
 
     [getListProductByCategory.pending]: (state) => {
-      console.log("getListProductByCategory.pending", state)
+      // console.log("getListProductByCategory.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getListProductByCategory.fulfilled]: (state, action) => {
-      console.log("getListProductByCategory.fulfilled", action.payload)
+      // console.log("getListProductByCategory.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccess = true;
       state.data = action.payload.content;
@@ -176,20 +176,20 @@ export const productsSlice = createSlice({
     },
 
     [getListProductByCategory.rejected]: (state, action) => {
-      console.log("getListProductByCategory.rejected", action)
+      // console.log("getListProductByCategory.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
     },
 
     [getListProductByKeyword.pending]: (state) => {
-      console.log("getListProductByKeyword.pending", state)
+      // console.log("getListProductByKeyword.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getListProductByKeyword.fulfilled]: (state, action) => {
-      console.log("getListProductByKeyword.fulfilled", action.payload)
+      // console.log("getListProductByKeyword.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccess = true;
       state.data = action.payload.content;
@@ -202,7 +202,7 @@ export const productsSlice = createSlice({
     },
 
     [getListProductByKeyword.rejected]: (state, action) => {
-      console.log("getListProductByKeyword.rejected", action.payload.message)
+      // console.log("getListProductByKeyword.rejected", action.payload.message)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
@@ -212,37 +212,37 @@ export const productsSlice = createSlice({
 
 
     [getListProductSimilar.pending]: (state) => {
-      console.log("getListProductSimilar.pending", state)
+      // console.log("getListProductSimilar.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getListProductSimilar.fulfilled]: (state, action) => {
-      console.log("getListProductSimilar.fulfilled", action.payload)
+      // console.log("getListProductSimilar.fulfilled", action.payload)
       state.dataProductSimilar = action.payload.content;
     },
 
     [getListProductSimilar.rejected]: (state, action) => {
-      console.log("getListProductSimilar.rejected", action)
+      // console.log("getListProductSimilar.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
     },
 
     [getProduct.pending]: (state) => {
-      console.log("getProduct.pending", state)
+      // console.log("getProduct.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getProduct.fulfilled]: (state, action) => {
-      console.log("getProduct.fulfilled", action.payload)
+      // console.log("getProduct.fulfilled", action.payload)
       state.isSuccessDataProductCurrent = true;
       state.dataProductCurrent = action.payload;
     },
 
     [getProduct.rejected]: (state, action) => {
-      console.log("getProduct.rejected", action)
+      // console.log("getProduct.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;

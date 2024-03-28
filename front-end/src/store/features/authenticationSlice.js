@@ -80,54 +80,54 @@ export const authenticationSlice = createSlice({
 
   extraReducers: {
     [signupUser.pending]: (state) => {
-      console.log("signupUser.pending", state)
+      // console.log("signupUser.pending", state)
       state.isFetching = true;
     },
 
     [signupUser.fulfilled]: (state, action) => {
-      console.log("signupUser.fulfilled", action.payload.message)
+      // console.log("signupUser.fulfilled", action.payload.message)
       state.isFetching = false;
       state.isSuccess = true;
       state.message = action.payload.message;
     },
 
     [signupUser.rejected]: (state, action) => {
-      console.log("signupUser.rejected", action)
+      // console.log("signupUser.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
     },
 
     [loginUser.pending]: (state) => {
-      console.log("loginUser.pending", state)
+      // console.log("loginUser.pending", state)
       state.isFetching = true;
     },
 
     [loginUser.fulfilled]: (state, action) => {
-      console.log("loginUser.fulfilled", action.payload.message)
+      // console.log("loginUser.fulfilled", action.payload.message)
       state.isFetching = false;
       state.isSuccess = true;
     },
 
     [loginUser.rejected]: (state, action) => {
-      console.log("loginUser.rejected", action)
+      // console.log("loginUser.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
     },
 
     [logout.pending]: (state) => {
-      console.log("logout.pending", state)
+      // console.log("logout.pending", state)
       state.isFetching = true;
     },
 
     [logout.fulfilled]: (state, action) => {
-      console.log("logout.fulfilled", action.payload.message)
+      // console.log("logout.fulfilled", action.payload.message)
       state.message = action.payload.message;
     },
 
     [logout.rejected]: (state, action) => {
-      console.log("logout.rejected", action)
+      // console.log("logout.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;

@@ -487,6 +487,13 @@
     display: block;
 }
 
+.btn-log.btn-taikhoan{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
 /*********************1200px**********************/
 /* @media screen and (max-width: 1200px) {
     .topnav {

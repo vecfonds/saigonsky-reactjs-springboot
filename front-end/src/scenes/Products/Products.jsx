@@ -62,7 +62,7 @@ const Products = () => {
 
     const [pageNumber, setpageNumber] = useState(0);
     const [pageSize, setPageSize] = useState(8);
-    const [sortBy, setSortBy] = useState("createAt");
+    const [sortBy, setSortBy] = useState("price");
     const [sortOrder, setSortOrder] = useState("des");
 
     useEffect(() => {
@@ -282,5 +282,7 @@ const Products = () => {
 }
 
 export default Products
+
+
 
 

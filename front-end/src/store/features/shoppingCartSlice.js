@@ -6,10 +6,10 @@ export const getCart = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const response = await shoppingCartService.getCart();
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -20,10 +20,10 @@ export const addProductToCart = createAsyncThunk(
   async ({ productId, quantity, size, color }, thunkAPI) => {
     try {
       const response = await shoppingCartService.addProductToCart({ productId, quantity, size, color });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -34,10 +34,10 @@ export const updateProductQuantityInCart = createAsyncThunk(
   async ({ productId, quantity, size, color }, thunkAPI) => {
     try {
       const response = await shoppingCartService.updateProductQuantityInCart({ productId, quantity, size, color });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -49,10 +49,10 @@ export const deleteProductInCart = createAsyncThunk(
   async ({ productId, quantity, size, color }, thunkAPI) => {
     try {
       const response = await shoppingCartService.deleteProductInCart({ productId, quantity, size, color });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -115,13 +115,13 @@ export const shoppingCartSlice = createSlice({
 
   extraReducers: {
     [getCart.pending]: (state) => {
-      console.log("getCart.pending", state)
+      // console.log("getCart.pending", state)
       state.isFetchingShoppingCart = true;
       state.messageShoppingCart = "";
     },
 
     [getCart.fulfilled]: (state, action) => {
-      console.log("getCart.fulfilled", action.payload.cartItems)
+      // console.log("getCart.fulfilled", action.payload.cartItems)
       state.isFetchingShoppingCart = false;
       state.isSuccessGetShoppingCart = true;
       state.dataShoppingCart = action.payload.cartItems;
@@ -129,21 +129,21 @@ export const shoppingCartSlice = createSlice({
     },
 
     [getCart.rejected]: (state, action) => {
-      console.log("getCart.rejected", action)
+      // console.log("getCart.rejected", action)
       state.isFetchingShoppingCart = false;
       state.isErrorShoppingCart = true;
-      state.messageShoppingCart = action.payload.message;
+      // state.messageShoppingCart = action.payload.message;
     },
 
 
     [addProductToCart.pending]: (state) => {
-      console.log("addProductToCart.pending", state)
+      // console.log("addProductToCart.pending", state)
       state.isFetchingShoppingCart = true;
       state.messageShoppingCart = "";
     },
 
     [addProductToCart.fulfilled]: (state, action) => {
-      console.log("addProductToCart.fulfilled", action.payload.cartItems)
+      // console.log("addProductToCart.fulfilled", action.payload.cartItems)
       state.isFetchingShoppingCart = false;
       state.isSuccessAddShoppingCart = true;
       state.dataShoppingCart = action.payload.cartItems;
@@ -151,20 +151,20 @@ export const shoppingCartSlice = createSlice({
     },
 
     [addProductToCart.rejected]: (state, action) => {
-      console.log("addProductToCart.rejected", action)
+      // console.log("addProductToCart.rejected", action)
       state.isFetchingShoppingCart = false;
       state.isErrorShoppingCart = true;
       state.messageShoppingCart = action.payload.message;
     },
 
     [updateProductQuantityInCart.pending]: (state) => {
-      console.log("updateProductQuantityInCart.pending", state)
+      // console.log("updateProductQuantityInCart.pending", state)
       state.isFetchingShoppingCart = true;
       state.messageShoppingCart = "";
     },
 
     [updateProductQuantityInCart.fulfilled]: (state, action) => {
-      console.log("updateProductQuantityInCart.fulfilled", action.payload.cartItems)
+      // console.log("updateProductQuantityInCart.fulfilled", action.payload.cartItems)
       state.isFetchingShoppingCart = false;
       state.isSuccessUpdateShoppingCart = true;
       state.dataShoppingCart = action.payload.cartItems;
@@ -172,7 +172,7 @@ export const shoppingCartSlice = createSlice({
     },
 
     [updateProductQuantityInCart.rejected]: (state, action) => {
-      console.log("updateProductQuantityInCart.rejected", action)
+      // console.log("updateProductQuantityInCart.rejected", action)
       state.isFetchingShoppingCart = false;
       state.isErrorShoppingCart = true;
       state.messageShoppingCart = action.payload.message;
@@ -180,20 +180,20 @@ export const shoppingCartSlice = createSlice({
 
 
     [deleteProductInCart.pending]: (state) => {
-      console.log("deleteProductInCart.pending", state)
+      // console.log("deleteProductInCart.pending", state)
       state.isFetchingShoppingCart = true;
       state.messageShoppingCart = "";
     },
 
     [deleteProductInCart.fulfilled]: (state, action) => {
-      console.log("deleteProductInCart.fulfilled", action.payload)
+      // console.log("deleteProductInCart.fulfilled", action.payload)
       state.isFetchingShoppingCart = false;
       state.isSuccessDeleteShoppingCart = true;
       state.messageShoppingCart = action.payload.message;
     },
 
     [deleteProductInCart.rejected]: (state, action) => {
-      console.log("deleteProductInCart.rejected", action)
+      // console.log("deleteProductInCart.rejected", action)
       state.isFetchingShoppingCart = false;
       state.isErrorShoppingCart = true;
       state.messageShoppingCart = action.payload.message;

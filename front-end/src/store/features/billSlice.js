@@ -20,10 +20,10 @@ export const getListBillUser = createAsyncThunk(
   async ({ pageNumber}, thunkAPI) => {
     try {
       const response = await billService.getListBillUser({ pageNumber});
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -33,12 +33,12 @@ export const addBill = createAsyncThunk(
   "bill/addBill",
   async ({ payMethod }, thunkAPI) => {
     try {
-      console.log(payMethod);
+      // console.log(payMethod);
       const response = await billService.addBill({ payMethod });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -66,13 +66,13 @@ export const billSlice = createSlice({
 
   extraReducers: {
     [getListBillUser.pending]: (state) => {
-      console.log("getListBillUser.pending", state)
+      // console.log("getListBillUser.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getListBillUser.fulfilled]: (state, action) => {
-      console.log("getListBillUser.fulfilled", action.payload)
+      // console.log("getListBillUser.fulfilled", action.payload)
       state.isSuccessGetListBill = true;
       state.isFetching = false;
       state.billData = action.payload.content;
@@ -85,27 +85,27 @@ export const billSlice = createSlice({
     },
 
     [getListBillUser.rejected]: (state, action) => {
-      console.log("getListBillUser.rejected", action)
+      // console.log("getListBillUser.rejected", action)
       state.isFetching = false;
       state.message = action.payload.message;
     },
 
 
     [addBill.pending]: (state) => {
-      console.log("addBill.pending", state)
+      // console.log("addBill.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [addBill.fulfilled]: (state, action) => {
-      console.log("addBill.fulfilled", action.payload)
+      // console.log("addBill.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccessAddBill = true;
       state.message = action.payload.message;
     },
 
     [addBill.rejected]: (state, action) => {
-      console.log("addBill.rejected", action)
+      // console.log("addBill.rejected", action)
       state.isError = true;
       state.message = action.payload.message;
     },

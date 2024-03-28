@@ -131,7 +131,7 @@ const NewProducts = () => {
             >
                 <Slider {...settings}>
                     {data.map(product =>//-8
-                        <div className="product-card">
+                        <div className="product-card" key={product.id}>
                             <Link to={`/sanpham/${product.id}`} state={{ id: product.id }} className="product-card-img">
 
                                 <img src={`${product.images.filter(i => i.main === 1)[0]?.content}`} alt="item" />

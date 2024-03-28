@@ -7,10 +7,10 @@ export const getFavourite = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const response = await favouriteService.getFavourite();
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -21,10 +21,10 @@ export const addProductToFavourite = createAsyncThunk(
   async ({ productId }, thunkAPI) => {
     try {
       const response = await favouriteService.addProductToFavourite({ productId });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -35,10 +35,10 @@ export const deleteProductInFavourite = createAsyncThunk(
   async ({ productId }, thunkAPI) => {
     try {
       const response = await favouriteService.deleteProductInFavourite({ productId });
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -71,14 +71,14 @@ export const favouriteSlice = createSlice({
       return state;
     },
     addDataFavourite: (state, action) => {
-      console.log("addDataFavorite - action.payload", action.payload);
+      // console.log("addDataFavorite - action.payload", action.payload);
 
       state.dataFavourite.push(action.payload);
       // console.log("state", state);
       return state;
     },
     deleteDataFavourite: (state, action) => {
-      console.log("deleteDataFavorite - action.payload", action.payload);
+      // console.log("deleteDataFavorite - action.payload", action.payload);
 
       state.dataFavourite = state.dataFavourite.filter(
         (item) => item.id !== action.payload
@@ -91,13 +91,13 @@ export const favouriteSlice = createSlice({
 
   extraReducers: {
     [getFavourite.pending]: (state) => {
-      console.log("getFavourite.pending", state)
+      // console.log("getFavourite.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [getFavourite.fulfilled]: (state, action) => {
-      console.log("getFavourite.fulfilled", action.payload)
+      // console.log("getFavourite.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccessGetFavourite = true;
       state.dataFavourite = action.payload;
@@ -105,21 +105,21 @@ export const favouriteSlice = createSlice({
     },
 
     [getFavourite.rejected]: (state, action) => {
-      console.log("getFavourite.rejected", action)
+      // console.log("getFavourite.rejected", action)
       state.isFetching = false;
       state.isError = true;
-      state.message = action.payload.message;
+      // state.message = action.payload.message;
     },
 
 
     [addProductToFavourite.pending]: (state) => {
-      console.log("addProductToFavourite.pending", state)
+      // console.log("addProductToFavourite.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [addProductToFavourite.fulfilled]: (state, action) => {
-      console.log("addProductToFavourite.fulfilled", action.payload)
+      // console.log("addProductToFavourite.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccessAddFavourite = true;
       state.dataFavourite.push(action.payload);
@@ -127,27 +127,27 @@ export const favouriteSlice = createSlice({
     },
 
     [addProductToFavourite.rejected]: (state, action) => {
-      console.log("addProductToFavourite.rejected", action)
+      // console.log("addProductToFavourite.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
     },
 
     [deleteProductInFavourite.pending]: (state) => {
-      console.log("deleteProductInFavourite.pending", state)
+      // console.log("deleteProductInFavourite.pending", state)
       state.isFetching = true;
       state.message = "";
     },
 
     [deleteProductInFavourite.fulfilled]: (state, action) => {
-      console.log("deleteProductInFavourite.fulfilled", action.payload)
+      // console.log("deleteProductInFavourite.fulfilled", action.payload)
       state.isFetching = false;
       state.isSuccessDeleteFavourite = true;
       state.message = action.payload.message;
     },
 
     [deleteProductInFavourite.rejected]: (state, action) => {
-      console.log("deleteProductInFavourite.rejected", action)
+      // console.log("deleteProductInFavourite.rejected", action)
       state.isFetching = false;
       state.isError = true;
       state.message = action.payload.message;
