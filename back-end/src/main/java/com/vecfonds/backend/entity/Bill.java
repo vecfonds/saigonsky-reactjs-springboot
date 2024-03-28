@@ -27,7 +27,7 @@ public class Bill {
     @Column(name = "total", nullable = false)
     private Double total = 0.0;
 
-    @Column(name = "pay-method", nullable = false)
+    @Column(name = "pay_method", nullable = false)
     private String payMethod;
 
     @OneToMany(mappedBy = "bill", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)

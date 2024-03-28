@@ -7,6 +7,7 @@ import com.vecfonds.backend.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class BillController {
         return new ResponseEntity<>( billResponse, HttpStatus.OK);
     }
 
+    @Secured("ADMIN")
     @GetMapping("/list")
     public ResponseEntity<?> getListBill(
             @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,

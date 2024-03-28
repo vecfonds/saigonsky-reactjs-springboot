@@ -74,26 +74,28 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
-//    @Secured("ADMIN")
+    @Secured("ADMIN")
     @PutMapping("{productId}")
     public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody Product product){
         ProductDTO productDTO = productService.updateProduct(productId,product);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
-//    @Secured("ADMIN")
+    @Secured("ADMIN")
     @DeleteMapping("{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
         String message = productService.deleteProduct(productId);
         return new ResponseEntity<>(new MessageResponse(message), HttpStatus.OK);
     }
 
+    @Secured("ADMIN")
     @PutMapping("{productId}/image-link")
     public ResponseEntity<?> addProductImageLink(@PathVariable Long productId, @Valid @RequestBody Image image){
         ProductDTO productDTO = productService.createProductImageLink(productId, image);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
+    @Secured("ADMIN")
     @PutMapping("{productId}/image-multipart-file")
     public ResponseEntity<?> addProductImageMultipartFile(@PathVariable Long productId, MultipartFile image, Integer main) throws IOException {
         ProductDTO productDTO = productService.createProductImageMultipartFile(productId, image, main);
