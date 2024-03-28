@@ -121,6 +121,13 @@ const Products = () => {
         }
     };
 
+    const goToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    };
+
     return (
         <div id="products">
             <motion.div
@@ -273,7 +280,7 @@ const Products = () => {
                         <div>{message}</div>
                     </div>
                     : <div className="pagination">
-                        <Pagination count={totalPages} page={pageNumber + 1} onChange={handleChangePageNumber} />
+                        <Pagination count={totalPages} page={pageNumber + 1} onChange={handleChangePageNumber} onClick={goToTop} />
                     </div>
             }
         </div>
