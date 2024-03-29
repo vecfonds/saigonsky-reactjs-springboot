@@ -1,8 +1,8 @@
 CREATE TABLE bill (
   id           BIGINT AUTO_INCREMENT PRIMARY KEY,
   address      VARCHAR(255),
-  create_at    TIMESTAMP,
-  modified_at  TIMESTAMP,
+  create_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   pay_method   VARCHAR(255) NOT NULL,
   phone_number VARCHAR(255),
   total        DOUBLE NOT NULL,
@@ -11,8 +11,8 @@ CREATE TABLE bill (
 
 CREATE TABLE category (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-  create_at   TIMESTAMP,
-  modified_at TIMESTAMP,
+  create_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   name        VARCHAR(255) NOT NULL
 );
 
@@ -20,11 +20,11 @@ CREATE TABLE product (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
   album       VARCHAR(255),
   connect     VARCHAR(255),
-  create_at   TIMESTAMP,
+  create_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   description VARCHAR(255),
   material    VARCHAR(255),
   model       VARCHAR(255),
-  modified_at TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   name        VARCHAR(255),
   price       DOUBLE NOT NULL,
   quantity    INT,
@@ -60,8 +60,8 @@ CREATE TABLE role (
 
 CREATE TABLE shopping_cart (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-  create_at   TIMESTAMP,
-  modified_at TIMESTAMP,
+  create_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   total       DOUBLE NOT NULL
 );
 
@@ -80,8 +80,8 @@ CREATE TABLE cart_item (
 CREATE TABLE user (
   id               BIGINT AUTO_INCREMENT PRIMARY KEY,
   address          VARCHAR(255),
-  create_at        TIMESTAMP,
-  modified_at      TIMESTAMP,
+  create_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   password         VARCHAR(255),
   phone_number     VARCHAR(255),
   username         VARCHAR(255),
@@ -226,6 +226,3 @@ INSERT INTO `image` (`content`, `main`, `product_id`) VALUES
 ('https://product.hstatic.net/200000182297/product/72_ae5ace4a691f458d88f83e5b5074889e_master.jpg', 1, '5'),
 ('https://product.hstatic.net/200000182297/product/sm002921212332010457p799dt_q003021702332010457p699dt_1__3a9c1dd9c5c5433ead4d435893c277a8_master.jpg', 0, '20'),
 ('https://product.hstatic.net/200000182297/product/sm195621222352169018p999dt_q670521732230900432p699dt_4__d0ec3e6755ee47e998e0f733a0f261da_master.jpg', 0, '6');
-
-
-
