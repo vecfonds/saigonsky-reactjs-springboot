@@ -125,7 +125,7 @@ export const shoppingCartSlice = createSlice({
       state.isFetchingShoppingCart = false;
       state.isSuccessGetShoppingCart = true;
       state.dataShoppingCart = action.payload.cartItems;
-      state.messageShoppingCart = action.payload.message;
+      // state.messageShoppingCart = action.payload.message;
     },
 
     [getCart.rejected]: (state, action) => {
@@ -168,14 +168,14 @@ export const shoppingCartSlice = createSlice({
       state.isFetchingShoppingCart = false;
       state.isSuccessUpdateShoppingCart = true;
       state.dataShoppingCart = action.payload.cartItems;
-      state.messageShoppingCart = action.payload.message;
+      // state.messageShoppingCart = action.payload.message;
     },
 
     [updateProductQuantityInCart.rejected]: (state, action) => {
       // console.log("updateProductQuantityInCart.rejected", action)
       state.isFetchingShoppingCart = false;
       state.isErrorShoppingCart = true;
-      state.messageShoppingCart = action.payload.message;
+      // state.messageShoppingCart = action.payload.message;
     },
 
 
@@ -189,14 +189,14 @@ export const shoppingCartSlice = createSlice({
       // console.log("deleteProductInCart.fulfilled", action.payload)
       state.isFetchingShoppingCart = false;
       state.isSuccessDeleteShoppingCart = true;
-      state.messageShoppingCart = action.payload.message;
+      // state.messageShoppingCart = action.payload.message;
     },
 
     [deleteProductInCart.rejected]: (state, action) => {
       // console.log("deleteProductInCart.rejected", action)
       state.isFetchingShoppingCart = false;
       state.isErrorShoppingCart = true;
-      state.messageShoppingCart = action.payload.message;
+      // state.messageShoppingCart = action.payload.message;
     },
   },
 });

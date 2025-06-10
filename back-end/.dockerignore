@@ -1,0 +1,21 @@
+# Build artifacts
+target
+*.iml
+*.class
+*.log
+
+# IDE & OS
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+
+# Git & env
+.git
+.gitignore
+
+# Terraform
+IaC-Terraform
+
+README.md
